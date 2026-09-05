@@ -1,0 +1,6 @@
+# Backstage material — lives in git, is not served by the website.
+# The deck is the site; the md is the working doc behind it (speaker notes,
+# logistics, open decisions). Delete a line here to publish that file too.
+build_with_claude_workshop.md
+CLAUDE.md
+README.md

@@ -1,0 +1,657 @@
+# Build with Claude — AI Workshop #1 (Wintercircus)
+
+Full working context for the workshop. The slide deck next to this file
+(`build_with_claude_workshop.html`) is the condensed stage version; this doc holds
+everything behind it: the brief, the story, the per-beat talk notes, the **slide map the deck
+is built from (§4)**, the build-session ladder, the takeaway pack, logistics, risks, and the
+open decisions.
+
+> **Deck status:** rebuilt 2026-09-05 to the slide map in §4 (34 slides, same visual system as the
+> launch deck). Speaker view: `N` toggles per-slide notes (the §3 talk notes, condensed), `T` a
+> 60-minute elapsed clock. Keys and clickers advance; **clicking does not** (the copy slides and
+> the notes panel are clickable). Slides 27 and 34 are click-to-copy (or press the prompt's number).
+> Slides 9 and 20 use HTML mock-ups (a terminal, the trimmed global file) instead of screenshots.
+> The four-years chart (slide 4) is redrawn from the *Four Years of Shipping* report; its data is
+> embedded in the deck's script (`SHIP_ROWS`), monthly totals exact, per-repo split to ~1K lines.
+
+---
+
+## 1. The brief (as published by Wintercircus)
+
+> **1st AI Workshop — Build with Claude (for beginners): Skills, Tools & MCP Servers**
+> with Xander Steenbrugge · Level: beginner 🌶️
+>
+> You've heard about AI agents. Maybe you've used Claude. But do you know what's actually
+> happening under the hood and how to build something yourself? This one is for beginners!
+>
+> Xander Steenbrugge does. AI researcher, full-stack engineer, and the architect behind
+> our Digital Community — the agent, memory and matchmaking layer powering the
+> Wintercircus community. In this hands-on workshop, he breaks down what AI agents
+> actually are, how they're built, and how you can start putting them to work.
+> No prior experience needed.
+>
+> Come prepared. Bring your laptop and your questions.
+
+| Slot | Time | Format |
+|---|---|---|
+| Talk | 13:00 – 14:00 | Xander on stage, laptop + projector |
+| Build | 14:00 – 16:00 | Interactive building session, with guidance |
+
+**Audience:** beginners. Expect a mix of founders, ops/marketing people, a few devs who
+have never used an agent, and some who've only used the Claude chat app. Assume no
+terminal experience for a meaningful share of the room.
+
+---
+
+## 2. The core thread
+
+**"Four months ago I was a backend Python dev. Now I ship a full-stack product. The only
+thing that changed was how I work."**
+
+And the second half of that sentence, which the whole middle of the talk unpacks:
+**"…and 'how I work' mostly means: I stopped writing code and started writing English."**
+
+Everything in the three hours hangs off those two lines:
+
+- Claude is the senior engineer who knows every stack and never gets tired of questions.
+- You are the architect: you decide *what* to build, *for whom*, and *whether it's right*.
+- The scarce resource is no longer implementation skill. It's the spark, the judgment, and
+  **the quality of the context you hand the model.**
+
+The point of the workshop is not to teach Claude Code. It's to make people leave believing
+they can build the thing they've been carrying around in their head, and to give them the
+first 200 metres of the path — plus the handful of working habits that took me four months
+to learn.
+
+### Proof that this works: the Wintercircus Community Brain
+
+The product I built from scratch since ~March 2026, launched on stage at the Collective
+Opening (3 Sept 2026):
+
+| Layer | What I used | Had I used it before? |
+|---|---|---|
+| Frontend | Next.js 16 App Router, on Vercel | No |
+| Auth | Clerk | No |
+| Database | Neon Postgres + pgvector | Postgres yes, Neon/pgvector no |
+| Backend | FastAPI on Modal (serverless) | Python yes, Modal yes |
+| Agents | Hermes workers, one sandbox per user, custom MCP server | No (built it) |
+| Voice | ElevenLabs realtime | No |
+| Memory | A from-scratch collective memory engine | No (built it) |
+
+All of it built in conversation with Claude Code, with Claude doing the typing and me doing
+the deciding. That table is the hook slide.
+
+---
+
+## 3. The talk (13:00 – 14:00)
+
+Six beats, ~55 minutes of content planned for 50 so questions can breathe. Demos over
+slides wherever possible. The beats build on each other: *agent → context → the file that
+holds the context → the English that produces the code → what you'll do with it.*
+
+| # | Beat | Min | The one idea |
+|---|---|---|---|
+| 3.1 | The hook | 8 | The only thing that changed was how I work |
+| 3.2 | What an agent actually is | 8 | A model + tools + a loop |
+| 3.3 | Everything is context engineering | 12 | Your real job is managing one context window; tools, MCP, skills and `.md` files are all ways to do that |
+| 3.4 | CLAUDE.md: the most valuable tokens of your life | 8 | The file the model reads first, every time — global and per project |
+| 3.5 | 80% of my tokens are English | 14 | The loop: Analyze & Propose → Improve → Implement → Review; grill yourself; the prompts I reuse; the failures |
+| 3.6 | What people actually do with it + bridge | 5 | The use-case menu, then the ladder |
+
+### 3.1 The hook (8 min)
+
+- Open cold with the **live demo** of the Community Brain inside the Wintercircus app.
+  Ask it something real ("who here has scaled a hardware product?"). Let the room see an
+  agent do actual work before any theory. Optional: the "No women?" exchange from
+  `agent_moments.md` (2026-09-05) — the agent naming a data gap instead of padding a list is
+  a better ad for *judgment* than any feature.
+- Then the reveal: the stack table above. "I had never touched most of this before March."
+- Land the thread: the only thing that changed was *how I work*.
+
+Stage notes: the demo must be rehearsed and have a fallback (screen recording) in case the
+venue wifi dies. Keep it under 3 minutes.
+
+### 3.2 What an agent actually is (8 min)
+
+Demystify. Most people picture either a chatbot or a sci-fi robot. It's neither.
+
+- **A model + some tools + a loop.** Think → Act (call a tool) → Observe (result comes
+  back as text) → repeat until done. A chatbot stops after "think." An agent runs the loop.
+- **Show a real tool call happening.** Open Claude Code in a terminal, ask it something that
+  requires reading a file, and narrate what's on screen: "that's the model deciding, that's
+  the tool call, that's the result coming back."
+- Everything else people hear about (memory, planning, "autonomy", multi-agent) is this
+  same loop with better tools and a longer leash.
+- Plant the seed for the next beat: *everything the model knows about your problem is
+  whatever is inside that one window right now.* Point at the terminal: "that scrollback
+  is its entire world."
+
+Four slides in the deck (5–8), one running example: the model is a text machine → a tool is a
+description and a call is text the model writes → the harness (ten lines of code) catches it,
+runs the real function, pastes the result back → the loop. No architecture porn.
+
+### 3.3 Everything is context engineering (12 min)
+
+The intellectual centre of the talk. "Prompt engineering" was about the sentence you type.
+Working with agents is about **what's in the window and when it gets there.**
+
+**The problem in one line:** the model is brilliant and has amnesia. Every session starts
+empty. Everything it knows about you, your project, your taste and your tools has to be
+*put* there — and the window is finite and costs money, so you can't put everything there
+all the time.
+
+**So the whole craft is: the right context, at the right moment, and nothing else.** Every
+mechanism people hear about is one answer to that:
+
+| Mechanism | What it is | Context-engineering role | When it's loaded |
+|---|---|---|---|
+| **CLAUDE.md** | A prose file the agent reads at the start of every session | The *always-on* map: mission, conventions, gotchas, pointers | Always (so keep it small) |
+| **`docs/*.md`** | Ordinary markdown files in the repo | Knowledge *on demand* — the agent reads the one doc relevant to today's task | When the map points at it |
+| **Skills** | A folder: instructions + examples for one kind of task | **Progressive disclosure** — a one-line description is always visible, the full instructions load only when triggered | On trigger |
+| **Tools** | A function the model may call, one verb each | The agent's *hands*; each tool's schema is context too, so fewer sharper tools beat many vague ones | At session start (schemas), results on call |
+| **MCP servers** | A standard plug: a service exposes its tools + instructions once, any agent can use them | Packaging tools *and* the instructions for using them into one connectable unit | On connect |
+| **Memory** | Whatever the agent writes down to read back later | Context that survives the session (the Community Brain is exactly this, at community scale) | On recall |
+
+Examples for each, all from the brain so it isn't abstract: `find_matches` / `recall_memory`
+(tools); the one MCP server handing ~15 community tools to every member's agent + the Odoo
+MCP reading the member CRM (MCP); the `event_calendar` skill teaching the agent how to
+recommend events (skill); `docs/reference/*.md` — one doc per subsystem, loaded only when
+that subsystem is touched (docs on demand).
+
+In the deck the table (slide 11) is followed by one slide per mechanism (12–17), each with a
+visual of the thing itself and the same three facts: what it is, when it's in the window, where
+it shows up in the brain. The three words in the workshop title are three of the six.
+
+Two rules that follow directly, and that beginners get wrong:
+
+1. **Progressive disclosure beats a giant prompt.** Don't paste everything you know into
+   every session. Write it once, somewhere the agent can find it when it matters.
+2. **Stale context is worse than no context.** The model *believes* what's in the window.
+   A doc describing code that no longer exists is a lie the agent will act on. (Failure
+   story for 3.5.)
+
+### 3.4 CLAUDE.md: the most valuable tokens of your life (8 min)
+
+Show, don't tell: put a trimmed version of my real global `CLAUDE.md` on screen. It is
+*just prose.* No syntax, no config. That's the whole point.
+
+**Two levels, two jobs:**
+
+| File | Lives at | Loaded for | What goes in it |
+|---|---|---|---|
+| **Global** `~/.claude/CLAUDE.md` | Your home dir | Every project, every session | *How to work with me*: communication rules, your toolchain, your standing preferences |
+| **Project** `<repo>/CLAUDE.md` | Repo root | That project only | *How this project works*: mission, layout, commands, the gotchas that bite every session, pointers to deeper docs |
+
+They're read together — global first, project on top. Write them **as you go**: every time
+the agent does something you had to correct, the correction goes in the file so you never
+say it twice. That's why it's the most valuable file you own — it's the compressed residue
+of every mistake.
+
+**The rules from my global file worth handing out** (these are the "ideas that should
+become part of the workshop"):
+
+*How to talk to me* (the model writes a wall of text for free; you pay to read it):
+- Every token at a human touchpoint must earn its place. Concise and clear over exhaustive.
+- Frame with one representative example (a before/after, one snippet) instead of narrating
+  everything.
+- Never use a bare pointer as if I remember it — a task number, a doc section, a ticket id
+  lives in *your* context, not mine. Restate what it is inline, every first mention.
+- Rich visual markdown: headers, tables, bold, code blocks. Scannable beats complete.
+- Tell it your toolchain once (for me: `uv` for Python, `ruff` for lint, VideoToolbox for
+  ffmpeg) so it never guesses.
+
+*The map, not the encyclopedia* (how to keep the file from bloating):
+- `CLAUDE.md` is what an agent reads cold at first contact: mission, conventions, commands,
+  layout, cross-cutting gotchas, **and a pointer map** into deeper docs. Per-feature depth
+  goes in its own doc; history goes in git; in-flight plans go in a TODO folder.
+- The bar for every sentence: *would a future agent landing cold be misled without it?* If
+  no, cut it. Give the file a size budget (mine: ~4,500 words) and defend it.
+- No status markers or datelines as content — describe the steady state.
+
+*Docs as living working memory* (the pattern behind the Community Brain repo):
+- Three folders: `docs/TODO/` (plans; where work starts) → `docs/reference/` (how things
+  actually work now, and why) → `docs/finished/` (write-only archive). Work flows one way.
+- A reference doc is **a map, not a mirror**: which files to read and why, what was tried
+  and rejected, which invariants are load-bearing. Anything the code already says is
+  redundant *and* a drift surface — cut it.
+- **Reference docs follow code, never lead it.** Code is the source of truth; when a doc
+  and the code disagree, fix the doc.
+- The doc pass is part of the task, not a follow-up. Stale docs mislead the next agent.
+
+Optional 20-second aside (it lands well): *"I even have a `life_goals.md` the agent reads —
+so when I ask it to help with something, it knows what everything nests under."* The
+principle: context engineering isn't a coding thing. Anything you'd explain to a new
+colleague on day one belongs in a file.
+
+### 3.5 80% of my tokens are English (14 min)
+
+The most valuable beat for beginners and the part most talks skip. The workflow, not the
+tech. Open with the number: **most of what I do with the model is not code.** It's sprint
+docs being written and improved, specs being interrogated, plans being argued with, diffs
+being reviewed, handovers being written for the *next* session. Code generation is the very
+last step — the compile step — and it's the part I now spend the *least* time on.
+
+Corollary for the room: **if you can write a clear paragraph, you can build software.**
+The English *is* the work.
+
+**The recurring loop — every feature goes through it:**
+
+| Step | What I ask for | What I do | Rule |
+|---|---|---|---|
+| **1 · Analyze & Propose** | "Read this, don't change anything. Tell me what's wrong with my plan and give me 2–3 ways to do it with trade-offs." | Read the proposal. This is where I learn the stack. | No code yet. Ever. |
+| **2 · Improve** | "Grill me." The model interrogates *me* until the spec has no holes. Then: edit the doc, not the code. | Answer the questions. Decide. | The spec is done when the model has no questions left. |
+| **3 · Implement** | "Do step 1 of the plan. Run the tests. One line on what changed. Stop if you hit a decision I haven't made." | Watch, steer, small steps. | One thing at a time. Never "build the whole app". |
+| **4 · Review** | "Review this diff as a senior engineer who didn't write it. Findings only, most severe first." Often in a *fresh* session. | Read the findings. Then the doc pass. | Trust boilerplate; check anything touching money, auth, deletion, other people's data. |
+
+Then it cycles: the review feeds the next proposal. The English artefacts (plan doc,
+reference doc, CLAUDE.md) get *better* with every loop; the code is regenerated from them.
+
+**Grill me** — the one skill to take home. It's a ~20-line `SKILL.md` (full text in
+Appendix A) that turns the model into a relentless interviewer: it maps your idea as a
+*design tree*, asks every question whose prerequisites are settled — numbered, each with its
+own recommended answer — waits, then asks the next round, until nothing is left silently
+assumed. Looking up facts is *its* job; making decisions is *yours*. Live demo: type
+"grill me on the workshop rung-1 artefact", show one round. Most people have never had a
+tool push back on their thinking; this is the moment they get it.
+
+**Prompt library** — a handful of explicit prompts I reuse constantly (Appendix B has the
+full text; the slide shows three). Draft versions below; swap in real ones from your history:
+
+- **The no-code opener:** "Read X. Don't change anything. Tell me what the doc gets wrong,
+  give me 2–3 ways to build it with the trade-off in one line each, pick one, wait for me."
+- **The grill:** "Grill me on this plan before we build anything."
+- **The scoped build:** "Implement option 2. Small steps; after each, run the tests and tell
+  me in one line what changed. Stay inside the scope we agreed. Stop and ask on any decision
+  I haven't made."
+- **The cold review:** "Review the diff as a senior engineer who didn't write it. Bugs,
+  things I'll regret in 3 months, anything touching auth/money/deletion. Findings only."
+- **The handover:** "Summarise for a human who didn't watch you work: what changed, one
+  before/after example, what's still open. Restate every pointer."
+- **The tour:** "Give me a guided tour of this repo: what it does, the five files to read
+  first and why, how one request flows through. Don't narrate every file."
+
+**Honest failure stories** (two on stage, three if there's time; each one line + lesson):
+- It confidently "fixed" the wrong thing because I hadn't read the plan. *Lesson: step 1
+  exists so you read before it builds.*
+- A setting that worked locally silently defaulted to "off" in prod because a secret never
+  shipped. *Lesson: "it ran" is not "it's verified". Ask it how it knows.*
+- A doc described a feature that had been removed; the agent built on it for an hour.
+  *Lesson: stale context is worse than none — the model believes the window.*
+
+**When to trust, when to check:** boilerplate, config, glue, tests: trust. Anything touching
+money, auth, data deletion, or other people's data: read every line, and put that rule in
+`CLAUDE.md` so the agent asks before it ships.
+
+### 3.6 What people actually do with it + bridge (5 min)
+
+A single "use-case menu" slide, deliberately not all code, because half the room won't
+write software next week. (Inspired by the "Master Claude in 28 days" poster; use the
+*idea*, not its layout.) One line each, with the mechanism it uses so it ties back to 3.3:
+
+| Use it to… | Mechanism |
+|---|---|
+| Learn any codebase in an hour — a guided, file-by-file tour | Claude Code |
+| Build a small CLI tool from a plain-English description | Claude Code |
+| Search your own notes, mail and drive and get cited answers | Connectors / MCP |
+| Automate your browser — "find the cheapest flight under 6h" | Claude in Chrome |
+| Design pages and decks without Figma — *this deck* was made this way | Claude Code + a design skill |
+| Rehearse: a mock interview, a pitch, a hard conversation | A skill |
+| Spin up your own MCP server so every agent can reach your service | MCP |
+| Schedule routines that run while you sleep | Routines |
+| Write your sprint doc, then have it argue with you | Grill me |
+
+Then the bridge:
+
+- "In the next two hours you'll do all of it in miniature: build something, plug in an MCP
+  server, write a CLAUDE.md and a skill, and get grilled."
+- Show the ladder slide. Rules: common track, nobody stares at a blank screen, racing ahead
+  is allowed, helpers roam.
+- "Laptops open. Rung zero starts now."
+
+---
+
+## 4. Slide map (the contract for the deck)
+
+`build_with_claude_workshop.html` is built to this list, same visual system as the launch
+deck. Titles are the on-screen headline; "on it" is the content; notes are for the speaker
+view or for the deck agent's judgment. Keep the click-to-copy cheat sheet as the last slide
+and leave it on the projector during the build.
+
+| # | Title (on screen) | On it | Beat |
+|---|---|---|---|
+| 1 | **Build with Claude** | Title, name, "beginners 🌶️", Wintercircus | — |
+| 2 | **The only thing that changed was how I work** | The one sentence + "…I stopped writing code and started writing English" | 3.1 |
+| 3 | **Built since March. Never touched most of it before.** | The stack table (7 rows, "had I used it before?" column) | 3.1 |
+| 4 | **Four years of shipping. Three quarters of it since May.** | The "monthly output by repository" chart from the *Four Years of Shipping* report, redrawn in the deck's style (data embedded in the deck's script); stats strip: 903,861 lines · 282,785 in Aug 2026 · 46% of days · 23% Markdown | 3.1 |
+| 5 | **A language model is a text machine** | Text in → model → text out; the umbrella question it *can't* answer; the "no internet / no files / no clock / no memory" chips | 3.2 |
+| 6 | **A tool is a description in the window. A tool call is just text the model writes.** | The window with the tool's plain-text description + the model generating `<call>get_weather("Ghent")</call>`; "nothing has happened yet" | 3.2 |
+| 7 | **The harness catches the call, runs real code, and pastes the result back** | The same window with the result appended + a ten-line harness loop in code | 3.2 |
+| 8 | **A model. Some tools. A loop.** | Think (model) → Act (harness) → Observe (window); "a chatbot stops after think"; live tool-call demo cue | 3.2 |
+| 9 | **That scrollback is its entire world** | Terminal mock with the context window outlined; "brilliant, with amnesia" | 3.2→3.3 |
+| 10 | **Everything is context engineering** | The one-liner: *the right context, at the right moment, and nothing else* | 3.3 |
+| 11 | **Six ways to put things in the window** | The mechanism table (CLAUDE.md / docs / skills / tools / MCP / memory) with "when loaded" column | 3.3 |
+| 12 | **CLAUDE.md — read first, every session** | The file anatomy (mission / layout / commands / rules / pointers); what · when · in the brain | 3.3 |
+| 13 | **docs/*.md — read only when the subject comes up** | The `docs/reference/` tree with one file lit for today's task; what · when · in the brain | 3.3 |
+| 14 | **Skills — a hook always on, a body on trigger** | `SKILL.md` anatomy: frontmatter (always) vs body (on trigger); what · when · in the brain | 3.3 |
+| 15 | **Tools — one verb each, described in text** | `find_matches` as the model sees it (schema + token cost) → the call the model writes → the result; what · when · in the brain | 3.3 |
+| 16 | **MCP servers — publish once, plug in anywhere** | Your agent plugged into three servers (browser, Odoo CRM, community brain), each "tools + instructions"; what · when · in the brain | 3.3 |
+| 17 | **Memory — written now, read back later** | Session 1 writes → memory store → session 2 recalls (the Pixiboo example); what · when · in the brain | 3.3 |
+| 18 | **Progressive disclosure** | Three windows side by side, block height = tokens: "paste everything" (over budget) vs session start vs "grill me on the memory bug" (two things just loaded, still fits); stale-context corollary | 3.3 |
+| 19 | **CLAUDE.md contains the most valuable tokens of your life** | Global vs project table; "the compressed residue of every mistake" | 3.4 |
+| 20 | **It's just prose** | The trimmed real global file, rendered as two-column prose | 3.4 |
+| 21 | **How to talk to me** | The five communication rules (earn its place / one example / no bare pointers / rich markdown / toolchain once) | 3.4 |
+| 22 | **The map, not the encyclopedia** | What belongs in CLAUDE.md vs in a doc vs in git; the "would a cold agent be misled?" test; size budget | 3.4 |
+| 23 | **Docs are the agent's working memory** | TODO → reference → finished flow; "a map, not a mirror"; "docs follow code, never lead it" | 3.4 |
+| 24 | **80% of my tokens are English** | Big number; what the English is (plans, specs, reviews, handovers); "code is the compile step" | 3.5 |
+| 25 | **Analyze & Propose → Improve → Implement → Review** | The four-step loop as a cycle; one rule per step | 3.5 |
+| 26 | **Grill me** | The skill in three lines: design tree · frontier rounds · you decide, it looks things up; live demo cue | 3.5 |
+| 27 | **Prompts I reuse** | Three prompts verbatim (opener, scoped build, cold review), click-to-copy; "full library in the pack" | 3.5 |
+| 28 | **Three times it went wrong** | The failure stories, one line + lesson each | 3.5 |
+| 29 | **Trust / Check** | Two columns | 3.5 |
+| 30 | **What people actually do with it** | The use-case menu (9 rows, mechanism column) | 3.6 |
+| 31 | **Six rungs** | The build ladder table | 3.6 |
+| 32 | **You are the imagination.** | Manifesto beat; Murmura mention | 3.6 |
+| 33 | **Go build** | Rules of the floor; helpers; "rung zero starts now" | 3.6 |
+| 34 | **Starter prompts** | Click-to-copy cheat sheet, one block per rung (see §5) — stays on screen | build |
+
+Slides 9, 20 and 26 are demo cues, not content slides — they should be visually quiet. Slides 5–8
+build the agent up step by step (text machine → tool as text → harness → loop) around one
+running example (`get_weather`); slides 12–17 are one slide per mechanism from the table on
+slide 11, each with the same three facts: what it is, when it's in the window, where it shows up
+in the brain.
+
+---
+
+## 5. The build session (14:00 – 16:00)
+
+A guided ladder. Everyone climbs the same rungs in the same order; people who finish early
+branch into free build. Every rung has a starter prompt (on the cheat-sheet slide, click to
+copy) so nobody has to invent the first sentence. The rungs now mirror the talk: build →
+plug in → give it context → get grilled → show.
+
+| Rung | Min | Goal | Done when |
+|---|---|---|---|
+| **0 · Setup** | 15 | Claude Code installed, logged in, first prompt answered in an empty folder | Everyone has seen Claude respond in their own terminal |
+| **1 · First build** | 20 | Everyone ships the same small thing end to end | It opens in a browser and does something |
+| **2 · Plug in the world** | 25 | Connect one MCP server, make the thing use it | The agent did something it couldn't do at rung 1 |
+| **3 · Give it context** | 25 | A global CLAUDE.md ("how to talk to me"), a project CLAUDE.md, one skill | Behaviour visibly changes on the next prompt |
+| **4 · Free build, grilled** | 20 | Install the grilling skill, get grilled on your own idea, build step one | The plan survived one round of questions |
+| **Thunder talks** | 15 | 60-second show-and-tell from whoever wants to | Room has seen 5–10 things built by peers |
+
+### 5.1 Rung 0 — Setup triage (15 min)
+
+This is where beginner workshops die, so it gets a real budget and all helpers on the
+floor.
+
+- Install Claude Code (`npm install -g @anthropic-ai/claude-code` or the native installer),
+  run `claude`, log in.
+- First prompt in an empty folder: something trivial and fun ("make a file that lists
+  three things you can help me with today").
+- Common blockers: no Node on the machine, corporate laptop restrictions, no terminal
+  familiarity on Windows (point them to PowerShell or WSL), no Claude subscription (see §7).
+- Pre-work email (§7) exists to shrink this rung. Expect ~30% of the room to have ignored it.
+
+### 5.2 Rung 1 — First build (20 min)
+
+Everyone builds the **same** small thing, so helpers can debug a known shape and people can
+compare notes with their neighbour.
+
+Candidate artefact (to decide, see §8): a single-page browser app with no backend, e.g. a
+personal "what should I work on today" board. Criteria: fun, visible, works on every OS,
+opens in a browser so it demos well at the thunder talks, zero dependencies.
+
+Teach through the prompt itself: the starter prompt asks Claude to **propose a plan first
+and wait**, then build in small steps, explain each in one line, ask before adding anything
+unrequested, and say how to open the result. That's Analyze & Propose → Implement, felt
+rather than told.
+
+### 5.3 Rung 2 — Plug in the world (25 min)
+
+Connect one MCP server. Options, from easiest to most interesting:
+
+- **Chrome / browser MCP (Claude in Chrome)** — the agent opens their own app and critiques
+  it. Very visible.
+- **Filesystem MCP** — boring but universal.
+- **A public API MCP** (weather, GitHub, etc.) — needs keys, riskier for beginners.
+
+Default to the browser one; it produces the strongest "it just did that?" moment and needs
+no keys. Have the filesystem one as a fallback for machines where the browser extension
+won't install. Tie back to slide 7: "you just added reach — new tools *and* the
+instructions for using them, in one plug."
+
+### 5.4 Rung 3 — Give it context (25 min)
+
+Three small artefacts, in this order, each proven by a before/after prompt:
+
+1. **Global `~/.claude/CLAUDE.md`** — start from the template in Appendix C: three rules
+   about how you want to be talked to, your toolchain, "ask before anything destructive".
+   Prove it: re-run the rung-1 "explain this" prompt and watch the answer get shorter.
+2. **Project `CLAUDE.md`** — ask Claude to write one for the rung-1 project: what it is,
+   layout, three rules. Read it before saving; delete anything that just narrates the code.
+3. **One skill** — their preferred way of adding a feature, as `.claude/skills/<name>/SKILL.md`.
+   Show the one-line description vs the body: that's progressive disclosure in their own
+   hands.
+
+This is the rung where people realise the agent is *steerable*, not just capable — and that
+steering is done in English, in files, once.
+
+### 5.5 Rung 4 — Free build, grilled (20 min)
+
+- Drop the grilling skill into `~/.claude/skills/grilling/SKILL.md` (Appendix A; in the
+  pack as a copy-paste file).
+- Starter prompt: "Here's my idea in two sentences: … Grill me." Answer one round.
+- Then the plan-first prompt: five-step plan, flag the hardest part, build step one.
+  Helpers roam.
+
+People who finish early: pick anything from the use-case menu (slide 21).
+
+### 5.6 Thunder talks (15 min)
+
+Stolen from Mars College, same format as Murmura: 60 seconds each, strictly timed, demos
+encouraged, live failure welcome. Whoever wants to. Close on this so the room ends with
+peers showing peers, not with me.
+
+Mention Murmura (the monthly Ghent builders' meetup at Wintercircus) as the place to keep
+going.
+
+---
+
+## 6. The takeaway pack
+
+One folder attendees can download (link on the last slide + in the follow-up mail). To be
+created next to this doc as `workshop_pack/`:
+
+| File | What | Source |
+|---|---|---|
+| `README.md` | The ladder + the cheat-sheet prompts, plain markdown | §5 + slide 25 |
+| `CLAUDE.global.template.md` | A starter global CLAUDE.md, ~25 lines, with `<fill in>` slots | Appendix C |
+| `skills/grilling/SKILL.md` | The grilling skill, verbatim | Appendix A |
+| `prompts.md` | The prompt library | Appendix B |
+| `docs_workflow.md` | The TODO → reference → finished pattern in one page | 3.4 |
+| `links.md` | Install page, MCP servers used, Claude in Chrome, Murmura | — |
+
+---
+
+## 7. Logistics and risks
+
+### Access to Claude — the biggest single risk
+
+Claude Code needs a paid plan (Pro / Max) or API credits. Beginners won't have this.
+Options, pick one before the pre-work email goes out:
+
+1. **Ask attendees to bring a Claude Pro subscription** (cheapest for us, filters out the
+   least committed, but will lose people at the door).
+2. **Wintercircus-sponsored API credits** on a shared org key with a spend cap, handed out
+   as per-person keys at rung 0. Cleanest experience; needs budget sign-off.
+3. **Free-tier fallback**: the Claude web app for people who can't get set up, so they can
+   at least follow the propose/improve/review loop in chat — and get grilled there.
+
+Recommendation: 2 with 3 as a fallback.
+
+### Pre-work email (send ~5 days before)
+
+- Bring a laptop you can install software on (not a locked-down corporate machine).
+- Install Node ≥ 22 and Claude Code; run `claude` once and log in. Link to the install page.
+- Have your Claude account / key ready (per the decision above).
+- Optional: bring one idea you've always wanted to exist, in two sentences. (It gets grilled
+  at rung 4.)
+- "If anything fails, don't worry, the first 15 minutes are for exactly that."
+
+### Helpers
+
+Two hours of 1-on-1 guidance for beginners needs **2–3 roaming helpers** besides me. Brief
+them on the ladder, the starter prompts, the top five setup failures, and the three rung-3
+artefacts. Ideal: people from the Murmura crowd who already use Claude Code daily.
+
+### Venue
+
+- Wifi capacity for 30–60 laptops all hitting the API at once. Check with Wintercircus ops.
+- Power strips at every table.
+- Projector + my laptop for the talk; the same projector shows the cheat-sheet slide during
+  the build (leave it up).
+- Demo fallback: screen recording of the Community Brain demo on local disk.
+
+### Timing buffers
+
+The talk is scheduled at exactly 60 minutes with no buffer. Content is planned for ~50
+minutes. If running late: drop the third failure story, then the `life_goals.md` aside, then
+compress slide 14 (docs workflow) to one sentence — never cut the grill demo. If the talk
+runs over, cut rung-4 time, never rung-0 time.
+
+---
+
+## 8. Open decisions (before next week)
+
+- [ ] **Access model** for Claude (§7): sponsored credits vs bring-your-own.
+- [ ] **The rung-1 artefact**: pick the one thing everyone builds. Must be fun, visible,
+      cross-platform, browser-based, dependency-free.
+- [ ] **The MCP server for rung 2**: browser (default) vs filesystem (fallback). Test the
+      install on a clean Mac and a clean Windows machine.
+- [ ] **Real prompts for Appendix B**: the ones there now are drafts in my voice; replace with
+      2–3 verbatim from actual sessions.
+- [ ] **Trim the global CLAUDE.md** into the show-and-tell version for slide 11 (strip
+      personal context; keep the communication rules + docs workflow).
+- [ ] **Build the takeaway pack** (§6).
+- [ ] **Helpers**: names confirmed, briefed.
+- [ ] **Pre-work email**: drafted, sent by Wintercircus comms.
+- [ ] **Demo fallback recording** made.
+
+---
+
+## 9. Materials
+
+| File | What |
+|---|---|
+| `build_with_claude_workshop.html` | The stage deck, built to §4 (same visual system as the launch deck). `N` = speaker notes, `T` = talk clock. Last slide = click-to-copy cheat sheet; leave it on screen during the build. |
+| `build_with_claude_workshop.md` | This file. |
+| `workshop_pack/` | The takeaway pack (§6) — to be created. |
+| `agent_moments.md` | Verified, quotable exchanges from the live brain; source for the hook demo fallback. |
+| `wintercircus_launch.html` | The Collective Opening deck; the Community Brain demo prompts on its last slide are reusable for the hook. |
+
+---
+
+## Appendix A — the grilling skill (verbatim, `~/.claude/skills/grilling/SKILL.md`)
+
+```markdown
+---
+name: grilling
+description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
+---
+
+Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
+
+Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled: the questions you can ask _now_ without guessing at answers you haven't heard yet. Ask the whole frontier in one round: number each question and give your recommended answer. Then wait for the user's answers before the next round.
+
+Each question should be formatted like so:
+
+❓ **Q1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
+
+➡️ <your recommended answer>
+
+Each round the user answers reshapes the tree: settled decisions push the frontier outward and unblock questions that depended on them. Recompute the frontier and ask the next round. A question whose answer depends on another question still open in this round belongs to a _later_ round, not this one.
+
+Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (filesystem, tools, etc.), dispatch a sub-agent to find it; don't ask the user for anything you could look up yourself. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the sub-agent to report; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.
+
+The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
+```
+
+Why it works, for the slide: it separates *facts* (the model's job) from *decisions* (yours),
+it asks in rounds so you're never answering a question that depends on one you haven't
+answered yet, and it refuses to build until the tree is empty.
+
+## Appendix B — the prompt library (drafts; swap in verbatim ones from real sessions)
+
+**1 · Analyze & Propose (no code)**
+```
+Read docs/TODO/<plan>.md and the code it touches. Do not change anything.
+Tell me:
+1. what the doc gets wrong about the code as it is today,
+2. the 2–3 ways to build this, with the trade-off of each in one line,
+3. which one you'd pick and why.
+Then wait for me.
+```
+
+**2 · Improve (the grill)**
+```
+Grill me on this plan before we build anything. One round at a time, your
+recommended answer next to every question. Don't build until we agree.
+```
+
+**3 · Implement (scoped)**
+```
+Implement option 2 from your proposal, step 1 only. After the step: run the tests,
+tell me in one line what changed. Stay inside the scope we agreed. If you hit a
+decision I haven't made, stop and ask.
+```
+
+**4 · Review (cold)**
+```
+Review the diff as a senior engineer who didn't write it. Look for bugs, things
+I'll regret in three months, and anything touching auth, money, deletion or other
+people's data. Findings only, most severe first. No praise.
+```
+
+**5 · The doc pass**
+```
+We just shipped this phase. Do the doc pass: promote what's durable into
+docs/reference, collapse the finished phase in the TODO doc to a few lines, and
+remove anything in the docs that describes code that no longer exists.
+```
+
+**6 · The handover**
+```
+Summarise for a human who didn't watch you work: what changed, one before/after
+example, what's still open. Every task number, doc section or ticket id gets a
+few-word explainer the first time you mention it.
+```
+
+**7 · The tour (any unfamiliar codebase)**
+```
+Give me a guided tour of this repo: what it does, the five files I should read
+first and why, and how one request flows through it end to end. Don't narrate
+every file.
+```
+
+## Appendix C — starter global `CLAUDE.md` for beginners (~25 lines)
+
+```markdown
+# How to work with me
+
+## Talking to me
+- Be concise. Lead with the answer. One representative example beats a full narration.
+- Never reference a step, file or task by number alone — restate what it is.
+- Use headers, tables and code blocks so I can scan.
+
+## Before you build
+- Propose a plan and wait for my ok before writing code.
+- Build in small steps. After each step, say in one line what changed and how I can check it.
+- If you hit a decision I haven't made, stop and ask.
+
+## Never without asking
+- Deleting files or data, sending anything anywhere, spending money, touching secrets.
+
+## My tools
+- <language / package manager>
+- <editor / OS quirks>
+- <anything you always have to correct>
+```
