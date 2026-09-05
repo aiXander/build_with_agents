@@ -249,6 +249,13 @@ The English *is* the work.
 Then it cycles: the review feeds the next proposal. The English artefacts (plan doc,
 reference doc, CLAUDE.md) get *better* with every loop; the code is regenerated from them.
 
+**What that looks like on a normal day:** ~80% of my prompts are literally one of two,
+both pointed at the same file — *"Read `docs/TODO/<plan>.md` — analyze, scrutinize and
+improve this spec before I hand it off to a coding agent"* (steps 1–2, typed ten times per
+feature; the output is a better file, not code) and *"Implement `docs/TODO/<plan>.md`"*
+(step 3, typed once). Say the asymmetry out loud: beginners assume the skill lives in the
+second prompt; it lives entirely in the first.
+
 **Grill me** — the one skill to take home. It's a ~20-line `SKILL.md` (full text in
 Appendix A) that turns the model into a relentless interviewer: it maps your idea as a
 *design tree*, asks every question whose prerequisites are settled — numbered, each with its
@@ -347,17 +354,18 @@ and leave it on the projector during the build.
 | 23 | **Docs are the agent's working memory** | TODO → reference → finished flow; "a map, not a mirror"; "docs follow code, never lead it" | 3.4 |
 | 24 | **80% of my tokens are English** | Big number; what the English is (plans, specs, reviews, handovers); "code is the compile step" | 3.5 |
 | 25 | **Analyze & Propose → Improve → Implement → Review** | The four-step loop as a cycle; one rule per step | 3.5 |
-| 26 | **Grill me** | The skill in three lines: design tree · frontier rounds · you decide, it looks things up; live demo cue | 3.5 |
-| 27 | **Prompts I reuse** | Three prompts verbatim (opener, scoped build, cold review), click-to-copy; "full library in the pack" | 3.5 |
-| 28 | **Three times it went wrong** | The failure stories, one line + lesson each | 3.5 |
-| 29 | **Trust / Check** | Two columns | 3.5 |
-| 30 | **What people actually do with it** | The use-case menu (9 rows, mechanism column) | 3.6 |
-| 31 | **Six rungs** | The build ladder table | 3.6 |
-| 32 | **You are the imagination.** | Manifesto beat; Murmura mention | 3.6 |
-| 33 | **Go build** | Rules of the floor; helpers; "rung zero starts now" | 3.6 |
-| 34 | **Starter prompts** | Click-to-copy cheat sheet, one block per rung (see §5) — stays on screen | build |
+| 26 | **80% of my prompts are one of these two** | The two verbatim prompts side by side, click-to-copy: *"Read `docs/TODO/<plan>.md` — analyze, scrutinize and improve this spec before I hand it off to a coding agent"* and *"Implement `docs/TODO/<plan>.md`"*; the asymmetry (01 typed ten times per feature, 02 once) | 3.5 |
+| 27 | **Grill me** | The skill in three lines: design tree · frontier rounds · you decide, it looks things up; live demo cue | 3.5 |
+| 28 | **Prompts I reuse** | Three prompts verbatim (opener, scoped build, cold review), click-to-copy; "full library in the pack" | 3.5 |
+| 29 | **Three times it went wrong** | The failure stories, one line + lesson each | 3.5 |
+| 30 | **Trust / Check** | Two columns | 3.5 |
+| 31 | **What people actually do with it** | The use-case menu (9 rows, mechanism column) | 3.6 |
+| 32 | **Six rungs** | The build ladder table | 3.6 |
+| 33 | **You are the imagination.** | Manifesto beat; Murmura mention | 3.6 |
+| 34 | **Go build** | Rules of the floor; helpers; "rung zero starts now" | 3.6 |
+| 35 | **Starter prompts** | Click-to-copy cheat sheet, one block per rung (see §5) — stays on screen | build |
 
-Slides 9, 20 and 26 are demo cues, not content slides — they should be visually quiet. Slides 5–8
+Slides 9, 20 and 27 are demo cues, not content slides — they should be visually quiet. Slides 5–8
 build the agent up step by step (text machine → tool as text → harness → loop) around one
 running example (`get_weather`); slides 12–17 are one slide per mechanism from the table on
 slide 11, each with the same three facts: what it is, when it's in the window, where it shows up

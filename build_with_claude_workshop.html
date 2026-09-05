@@ -276,6 +276,12 @@ code, .mono { font-family: "SF Mono", "JetBrains Mono", Menlo, monospace; font-s
 .prompt.copied { background: rgba(28,52,40,0.85); border-color: rgba(79,179,126,0.5); }
 .prompt.copied .p-copy { color: var(--bg); background: var(--green); border-color: var(--green); }
 .p-txt { font-size: clamp(0.78rem, 1.15vw, 1.15rem); line-height: 1.4; font-weight: 300; color: var(--cream); }
+.prompts.two { grid-template-columns: 1fr 1fr; gap: clamp(1rem, 2.6vw, 2.6rem); }
+.prompts.two .prompt { padding: clamp(1rem, 2.6vh, 2rem) clamp(1.1rem, 2.2vw, 2.2rem); }
+.prompts.two .p-txt { font-size: clamp(0.95rem, 1.75vw, 1.75rem); line-height: 1.35; }
+.p-foot { margin-top: auto; padding-top: 0.75em; border-top: 1px solid var(--line); font-size: var(--small-size); color: var(--cream-dim); line-height: 1.45; }
+.p-foot b { color: var(--cream); font-weight: 500; }
+.p-foot em { color: var(--c, var(--red)); font-style: normal; font-weight: 500; }
 
 /* ===========================================
    CENTERED VISION + CLOSE
@@ -1438,6 +1444,32 @@ Do not act until the frontier is empty.</div>
     <p class="sub reveal">The English artefacts &mdash; plan, reference doc, CLAUDE.md &mdash; get <strong>better with every loop</strong>. The code is regenerated from them.</p>
   </div>
   <aside class="notes"><p>Then it cycles. The review feeds the next proposal. Point out that steps 1, 2 and 4 produce zero code &mdash; that's where 80% of the tokens go.</p></aside>
+</section>
+
+
+<!-- ===================================================
+     16b — TWO PROMPTS, SAME FILE (click to copy)
+     =================================================== -->
+<section class="slide copy-slide" data-swarm="off" data-beat="Writing English">
+  <div class="corner tl"><span class="wc-mark"></span><span>The workflow</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">What that loop looks like on a normal day</div>
+    <h2 class="display h2 reveal">80% of my prompts are one of these two.</h2>
+    <ol class="prompts two reveal">
+      <li class="prompt" style="--c: var(--red)">
+        <div class="p-head"><span class="p-num">01</span><span class="p-who">Before any code</span><button class="p-copy" type="button">Copy</button></div>
+        <p class="p-txt">Read <b>docs/TODO/&lt;plan&gt;.md</b> &mdash; analyze, scrutinize and improve this spec before I hand it off to a coding agent.</p>
+        <div class="p-foot">Where the whole job actually happens. The output is <b>a better file</b>, not code. Repeat until it has no questions left.</div>
+      </li>
+      <li class="prompt" style="--c: var(--green)">
+        <div class="p-head"><span class="p-num">02</span><span class="p-who">The handoff</span><button class="p-copy" type="button">Copy</button></div>
+        <p class="p-txt">Implement <b>docs/TODO/&lt;plan&gt;.md</b>.</p>
+        <div class="p-foot">One line. If prompt 01 did its job, this one is <em>just the compile step</em> &mdash; and I go make coffee.</div>
+      </li>
+    </ol>
+    <p class="sub reveal">Same file, twice. I'm not prompting an agent to write code &mdash; I'm <strong>maintaining one English document</strong> until it's good enough that the code falls out of it.</p>
+  </div>
+  <aside class="notes"><p>The concrete pay-off of the loop slide: two literal prompts carry most of my week. Say the asymmetry out loud &mdash; prompt 01 is typed ten times per feature, prompt 02 once. Beginners assume the skill is in prompt 02; it is entirely in 01. The plan file is the artefact they'll write in rung 3.</p></aside>
 </section>
 
 
