@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Build with Claude — AI Workshop #1, Wintercircus</title>
 <meta name="description" content="Build with Claude — AI Workshop #1 at Wintercircus, Ghent. A one-hour talk on building real things with AI agents, followed by a two-hour hands-on build session. No experience assumed." />
 <meta name="theme-color" content="#121214" />
@@ -101,10 +101,6 @@ body { font-family: var(--font-body); font-weight: 350; -webkit-font-smoothing: 
 }
 @media (max-height: 500px) {
   :root { --title-size: clamp(1.4rem, 4vw, 2.6rem); --big-size: clamp(1.2rem, 3.5vw, 2.2rem); --h2-size: clamp(1rem, 2.5vw, 1.6rem); --quote-size: clamp(0.9rem, 1.8vw, 1.3rem); }
-}
-@media (max-width: 700px) {
-  .flow, .caps, .ladder, .prompts, .split { grid-template-columns: 1fr !important; }
-  .flow-arrow { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
@@ -334,7 +330,7 @@ body.idle .nav-dots { opacity: 0; }
 .term .t { color: #8FA3FF; }
 .term .m { color: var(--cream); }
 .term .dim { color: var(--cream-faint); }
-.term-wrap .win { position: absolute; inset: -0.75rem; border: 2px dashed rgba(231,60,62,0.75); border-radius: clamp(0.7rem, 1.3vw, 1.3rem); pointer-events: none; }
+.term-wrap .win { position: absolute; inset: -0.75rem; border: 2px dashed rgba(231,60,62,0.75); border-radius: clamp(0.7rem, 1.3vw, 1.3rem); pointer-events: none; background: none; padding: 0; }
 .term-wrap .win-lbl { position: absolute; right: 0; top: -2.4em; font-size: var(--kicker-size); letter-spacing: 0.22em; text-transform: uppercase; color: var(--red); font-weight: 600; }
 
 /* ===========================================
@@ -409,7 +405,6 @@ body.idle .nav-dots { opacity: 0; }
 .prompts.five .p-txt { font-size: clamp(0.7rem, 1.02vw, 1.02rem); }
 .p-txt b { color: var(--red); font-weight: 500; }
 .copy-hint { margin-top: clamp(0.5rem, 1.5vh, 1rem); font-size: var(--small-size); letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream-faint); font-weight: 500; }
-@media (max-width: 700px) { .prompts.five .prompt { grid-column: span 6 !important; } .caps.five, .menu { grid-template-columns: 1fr !important; } .file { columns: 1; } }
 
 /* ===========================================
    SPEAKER VIEW — N toggles the notes panel, T toggles the elapsed clock
@@ -590,10 +585,84 @@ body.clock-on .clock { display: block; }
 .pdwin .blk.new { outline: 2px solid var(--green); outline-offset: -2px; }
 .pdwin .blk.new::after { content: "just loaded"; font-size: 0.75em; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); font-weight: 600; }
 .pdwin.over { border-color: rgba(231,60,62,0.7); }
-.pdwin.over::before { content: "over budget \00b7 slow \00b7 expensive \00b7 the model drowns"; position: absolute; top: 0; left: 0; right: 0; z-index: 2; background: rgba(231,60,62,0.9); color: var(--bg); font-size: var(--kicker-size); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; padding: 0.5em 0.8em; text-align: center; }
+.pdwin.over::before { content: "over budget \00b7 slow \00b7 expensive \00b7 the model drowns"; position: absolute; top: 0; left: 0; right: 0; z-index: 2; background: rgba(231,60,62,0.9); color: var(--bg); font-size: clamp(0.5rem, 0.72vw, 0.72rem); letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; font-weight: 700; padding: 0.5em 0.8em; text-align: center; }
 .pdcol .say { font-size: clamp(0.72rem, 1.1vw, 1.1rem); color: var(--cream-dim); line-height: 1.4; }
 .pdcol .say b { color: var(--cream); font-weight: 500; }
-@media (max-width: 700px) { .harness, .mech, .pd, .io, .plug, .memline, .stats { grid-template-columns: 1fr !important; } .tree { columns: 1; } }
+
+/* ===========================================
+   FRAGMENTS — .frag elements inside one slide reveal step by step (→ / tap) before the deck moves on.
+   data-frag="n" groups elements into one step. Used by the progressive-disclosure slide.
+   =========================================== */
+.slide .frag { transition: opacity 0.45s var(--ease), filter 0.45s var(--ease); }
+.slide .frag:not(.on) { opacity: 0.14; filter: saturate(0); pointer-events: none; }
+.slide .sub.frag:not(.on) { opacity: 0; }
+.pdwin .blk.frag { transition: height 0.5s var(--ease), min-height 0.5s var(--ease), opacity 0.4s var(--ease), margin 0.5s var(--ease); }
+.pdwin .blk.frag:not(.on) { height: 0 !important; min-height: 0; opacity: 0; margin-top: -3px; overflow: hidden; }
+.pdwin .room.frag:not(.on) { opacity: 0; }
+.pd-hint { margin-top: clamp(0.5rem, 1.4vh, 0.9rem); }
+/* peek: tap a block to see what is actually inside it */
+.pdwin .blk[data-peek] { cursor: pointer; transition: filter 0.15s; }
+.pdwin .blk[data-peek]:hover { filter: brightness(1.35); }
+.pdwin .blk.open { outline: 2px solid var(--cream); outline-offset: -2px; }
+.pdwin .peek { position: absolute; inset: 4px; z-index: 3; background: rgba(11,11,13,0.96); border: 1px solid var(--line); border-radius: 0.5em;
+  padding: 0.8em 1em; display: flex; flex-direction: column; gap: 0.4em; cursor: pointer; overflow: auto; animation: fragin 0.3s var(--ease); }
+.pdwin .peek .ph { display: flex; gap: 0.8em; align-items: baseline; font-size: var(--kicker-size); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; color: var(--cream-faint); border-bottom: 1px solid var(--line); padding-bottom: 0.5em; margin-bottom: 0.2em; }
+.pdwin .peek .ph b { color: var(--c, var(--cream)); letter-spacing: 0.04em; text-transform: none; font-size: 1.2em; flex: 1; min-width: 0; font-family: "SF Mono", Menlo, monospace; font-weight: 500; }
+.pdwin .peek .ph i { font-style: normal; color: var(--cream-dim); }
+.pdwin .peek .pl { font-size: clamp(0.66rem, 1vw, 1rem); line-height: 1.45; color: var(--cream-dim); }
+.pdwin .peek .pl::before { content: "\2014\00a0"; color: var(--cream-faint); }
+.pdwin .peek .pl:last-child { color: var(--cream); }
+@keyframes fragin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ===========================================
+   MOBILE — phones and touch tablets. The stage deck fits every slide to one screen; here each
+   slide scrolls vertically instead, and a swipe or the arrow buttons advance. Grids stack, tables
+   become cards (data-h on each cell comes from the script), the nav dots and key hints go.
+   =========================================== */
+.mnav { display: none; }
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  :root { --slide-padding: clamp(1.1rem, 4.5vw, 2rem); --body-size: clamp(0.88rem, 1.35vw, 1.3rem); --small-size: clamp(0.7rem, 0.95vw, 0.95rem); --kicker-size: clamp(0.62rem, 0.9vw, 0.9rem); }
+  .slide-content { justify-content: flex-start; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding-top: 3.8rem; padding-bottom: 4.4rem; }
+  .slide-content { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 3.4rem, #000 calc(100% - 4rem), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 3.4rem, #000 calc(100% - 4rem), transparent 100%); }
+  .title-slide .slide-content { -webkit-mask-image: none; mask-image: none; }
+  .slide-content > :first-child { margin-top: auto; }
+  .slide-content > :last-child { margin-bottom: auto; }
+  .nav-dots, .keyboard-hint, .notes-panel { display: none; }
+  .corner.tl { top: 1.1rem; }
+  .corner.br { right: auto; left: var(--slide-padding); bottom: 1.25rem; font-size: 0.6rem; }
+  .clock { right: var(--slide-padding); top: 1.1rem; }
+  .mnav { display: flex; position: fixed; right: var(--slide-padding); bottom: 0.7rem; z-index: 12; gap: 0.5rem; }
+  .mnav button { width: 2.7rem; height: 2.7rem; border-radius: 50%; border: 1px solid var(--cream-faint); background: rgba(18,18,20,0.85); color: var(--cream); font-size: 1.15rem; cursor: pointer; display: grid; place-items: center; -webkit-tap-highlight-color: transparent; }
+  .mnav button:active { background: var(--red); border-color: var(--red); }
+  .quote, .sub, .punch, .term-wrap { max-width: none; }
+  .file { columns: 1; max-height: none; }
+  .tree { columns: 1; }
+  .code pre, .term { overflow-x: auto; }
+  .split, .flow, .flow.three, .caps, .caps.five, .caps.two, .ladder, .prompts, .prompts.three, .prompts.five, .menu, .harness, .mech, .pd, .io, .plug, .memline, .numrow { grid-template-columns: 1fr !important; }
+  .stats { grid-template-columns: 1fr 1fr !important; }
+  .prompts { grid-auto-rows: auto; }
+  .prompts.five .prompt { grid-column: span 1 !important; }
+  .flow-arrow, .io .arr { display: none; }
+  .step, .cap, .caps.five .cap, .caps.two .cap, .rung, .split .col, .menu .item, .io .box { min-height: 0; }
+  .doc .sec { grid-template-columns: 1fr; gap: 0.2em; }
+  .doc .sec .h { white-space: normal; }
+  .number { font-size: clamp(4rem, 26vw, 7rem); }
+  .ship svg { height: clamp(9rem, 32vh, 14rem); }
+  .pdcol .lbl { height: auto; white-space: normal; }
+  .pdwin { height: clamp(11rem, 40vh, 16rem); }
+  .pdcol.frag:not(.on) { display: none; }
+  .pdcol.frag.on { animation: fragin 0.45s var(--ease); }
+  .p-copy { opacity: 1; }
+  /* tables: every row becomes a card, the header text moves onto each cell */
+  .tab thead { display: none; }
+  .tab, .tab tbody, .tab tr, .tab td { display: block; width: 100%; }
+  .tab tr { padding: 0.6em 0; border-bottom: 1px solid var(--line); }
+  .tab tr:last-child { border-bottom: 0; }
+  .tab td, .tab.compact td { padding: 0.12em 0; border: 0; white-space: normal; }
+  .tab td:first-child { font-weight: 600; color: var(--cream); margin-bottom: 0.15em; }
+  .tab td:not(:first-child)::before { content: attr(data-h); display: block; font-size: 0.7em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream-faint); font-weight: 600; margin-top: 0.35em; }
+  .tab .load { white-space: normal; }
+}
 </style>
 </head>
 <body class="hint">
@@ -603,6 +672,7 @@ body.clock-on .clock { display: block; }
 <div class="progress"></div>
 <nav class="nav-dots"></nav>
 <div class="keyboard-hint">→ space · ← back · F fullscreen · N notes · T timer</div>
+<div class="mnav"><button class="mprev" aria-label="Previous">&larr;</button><button class="mnext" aria-label="Next">&rarr;</button></div>
 <div class="clock">00:00</div>
 <div class="notes-panel"><div class="np-head"><span>Speaker notes</span><span class="np-beat"></span><span class="np-time"></span></div><div class="np-body"></div></div>
 
@@ -1112,46 +1182,47 @@ Do not act until the frontier is empty.</div>
         <div class="one">The beginner's instinct</div>
         <div class="lbl">Paste everything in, every time</div>
         <div class="pdwin over">
-          <div class="blk" style="height: 9%;  --c: rgba(231,60,62,0.35)">all 50 reference docs <small>~180K</small></div>
-          <div class="blk" style="height: 30%; --c: rgba(231,60,62,0.30)">&hellip;</div>
-          <div class="blk" style="height: 14%; --c: rgba(76,104,224,0.35)">every skill, full body <small>~12K</small></div>
-          <div class="blk" style="height: 12%; --c: rgba(231,226,209,0.18)">every tool schema <small>~8K</small></div>
-          <div class="blk" style="height: 10%; --c: rgba(231,226,209,0.14)">the whole chat history <small>~6K</small></div>
-          <div class="blk" style="height: 8%;  --c: rgba(231,226,209,0.22)">CLAUDE.md <small>~6K</small></div>
-          <div class="blk" style="height: 5%;  --c: rgba(231,226,209,0.35)">"fix the typo on the landing page"</div>
+          <div class="blk" style="height: 9%;  --c: rgba(231,60,62,0.35)" data-peek="memory-engine.md, worlds.md, telegram-adapter.md, voice-stack.md, booth-mode.md, identity.md &hellip;|and 44 more.|Not one of them is about the landing page.">all 50 reference docs <small>~180K</small></div>
+          <div class="blk" style="height: 30%; --c: rgba(231,60,62,0.30)" data-label="&hellip; the rest of the docs" data-peek="The same 50 docs, continued.|This one block is bigger than everything the smart version of this session needs.">&hellip;</div>
+          <div class="blk" style="height: 14%; --c: rgba(76,104,224,0.35)" data-peek="grilling &middot; 600 tokens of how to grill|modal &middot; 3K tokens of deploy instructions|markdown-to-pdf &middot; 2K tokens of layout rules|&hellip; 12 skills in full. Eleven of them irrelevant right now.">every skill, full body <small>~12K</small></div>
+          <div class="blk" style="height: 12%; --c: rgba(231,226,209,0.18)" data-peek="Read, Edit, Bash, Grep, WebFetch, &hellip;|One schema per tool: name, a one-line description, its parameters.|Needed. This block is the same in every window.">every tool schema <small>~8K</small></div>
+          <div class="blk" style="height: 10%; --c: rgba(231,226,209,0.14)" data-peek="Yesterday's debugging session, all of it.|None of it is about the landing page.">the whole chat history <small>~6K</small></div>
+          <div class="blk" style="height: 8%;  --c: rgba(231,226,209,0.22)" data-peek="Mission &middot; layout &middot; commands &middot; house rules &middot; one pointer per reference doc.|The map. Needed every time.">CLAUDE.md <small>~6K</small></div>
+          <div class="blk" style="height: 5%;  --c: rgba(231,226,209,0.35)" data-label="the task" data-peek="The only line that matters.|Buried under 200 pages.">"fix the typo on the landing page"</div>
         </div>
         <div class="say">The model reads <b>200 pages</b> to fix a typo. Slow, expensive, and the one line that matters is buried.</div>
       </div>
-      <div class="pdcol" style="--c: var(--green)">
+      <div class="pdcol frag" data-frag="1" style="--c: var(--green)">
         <div class="one">Session start</div>
         <div class="lbl">Only what's needed every time</div>
         <div class="pdwin">
           <div class="room">plenty of room</div>
-          <div class="blk" style="height: 12%; --c: rgba(231,226,209,0.18)">tool schemas <small>~8K</small></div>
-          <div class="blk" style="height: 3%;  --c: rgba(76,104,224,0.35)">skill descriptions, one line each <small>~400</small></div>
-          <div class="blk" style="height: 9%;  --c: rgba(231,226,209,0.22)">CLAUDE.md &middot; the map <small>~6K</small></div>
-          <div class="blk" style="height: 5%;  --c: rgba(231,226,209,0.35)">"fix the typo on the landing page"</div>
+          <div class="blk" style="height: 12%; --c: rgba(231,226,209,0.18)" data-peek="Read, Edit, Bash, Grep, WebFetch, &hellip;|One schema per tool: name, a one-line description, its parameters.|The agent knows what it can do, not yet what it will do.">tool schemas <small>~8K</small></div>
+          <div class="blk" style="height: 3%;  --c: rgba(76,104,224,0.35)" data-peek="grilling &mdash; stress-test a plan with hard questions|modal &mdash; deploy Python to the cloud|markdown-to-pdf &mdash; turn markdown into a styled PDF|&hellip; one line each. The body stays on disk until a description matches.">skill descriptions, one line each <small>~400</small></div>
+          <div class="blk" style="height: 9%;  --c: rgba(231,226,209,0.22)" data-peek="Mission &middot; layout &middot; commands &middot; house rules &middot; pointers.|Where things are, not what they say: docs/reference/memory-engine.md is a single line here.">CLAUDE.md &middot; the map <small>~6K</small></div>
+          <div class="blk" style="height: 5%;  --c: rgba(231,226,209,0.35)" data-label="the task" data-peek="The task.|Everything above it is what the agent needs to know before it starts looking.">"fix the typo on the landing page"</div>
         </div>
         <div class="say">The map plus <b>hooks</b>: one line per skill, one schema per tool. The agent knows what exists, not everything about it.</div>
       </div>
-      <div class="pdcol" style="--c: var(--blue)">
+      <div class="pdcol frag" data-frag="2" style="--c: var(--blue)">
         <div class="one">Ten minutes later</div>
         <div class="lbl">"Grill me on the memory bug"</div>
         <div class="pdwin">
-          <div class="room">still fits</div>
-          <div class="blk new" style="height: 12%; --c: rgba(79,179,126,0.30)">docs/reference/memory-engine.md <small>~5K</small></div>
-          <div class="blk new" style="height: 6%;  --c: rgba(76,104,224,0.45)">grilling &middot; the full skill body <small>~600</small></div>
-          <div class="blk" style="height: 8%;  --c: rgba(231,226,209,0.14)">the conversation so far <small>~4K</small></div>
-          <div class="blk" style="height: 12%; --c: rgba(231,226,209,0.18)">tool schemas <small>~8K</small></div>
-          <div class="blk" style="height: 3%;  --c: rgba(76,104,224,0.35)">skill descriptions <small>~400</small></div>
-          <div class="blk" style="height: 9%;  --c: rgba(231,226,209,0.22)">CLAUDE.md &middot; the map <small>~6K</small></div>
+          <div class="room frag" data-frag="4">still fits</div>
+          <div class="blk new frag" data-frag="4" style="height: 12%; --c: rgba(79,179,126,0.30)" data-peek="Which files hold the recall path, and why it's shaped that way.|What was tried and rejected. Which invariants are load-bearing.|Loaded because the map named it and the question said &ldquo;memory&rdquo;.">docs/reference/memory-engine.md <small>~5K</small></div>
+          <div class="blk new frag" data-frag="3" style="height: 6%;  --c: rgba(76,104,224,0.45)" data-peek="Ask one question at a time. Never accept a vague answer.|Push on assumptions, timelines, and what happens when it fails.|Loaded because &ldquo;grill me&rdquo; matched its one-line description.">grilling &middot; the full skill body <small>~600</small></div>
+          <div class="blk" style="height: 8%;  --c: rgba(231,226,209,0.14)" data-peek="Ten minutes of back-and-forth.|Still small. It grows every turn: the one block you can't unload.">the conversation so far <small>~4K</small></div>
+          <div class="blk" style="height: 12%; --c: rgba(231,226,209,0.18)" data-peek="Read, Edit, Bash, Grep, WebFetch, &hellip;|Unchanged since session start.">tool schemas <small>~8K</small></div>
+          <div class="blk" style="height: 3%;  --c: rgba(76,104,224,0.35)" data-peek="grilling &mdash; stress-test a plan with hard questions|modal &mdash; deploy Python to the cloud|markdown-to-pdf &mdash; turn markdown into a styled PDF|One of these just fired.">skill descriptions <small>~400</small></div>
+          <div class="blk" style="height: 9%;  --c: rgba(231,226,209,0.22)" data-peek="Mission &middot; layout &middot; commands &middot; house rules &middot; pointers.|One of its pointers just got followed.">CLAUDE.md &middot; the map <small>~6K</small></div>
         </div>
-        <div class="say">"Grill" matched a description &rarr; the body loaded. "Memory" &rarr; the map named one doc &rarr; it loaded. <b>Right context, right moment, nothing else.</b></div>
+        <div class="say frag" data-frag="4">"Grill" matched a description &rarr; the body loaded. "Memory" &rarr; the map named one doc &rarr; it loaded. <b>Right context, right moment, nothing else.</b></div>
       </div>
     </div>
-    <p class="sub reveal" style="max-width: 80ch; margin-top: clamp(0.6rem, 1.6vh, 1.1rem);">Write it once, where the agent can find it. It arrives when it's needed &mdash; and only then. Corollary: the model <strong>believes</strong> whatever is in the window, so stale context is worse than none.</p>
+    <div class="copy-hint pd-hint reveal">&rarr; or tap to step through &middot; tap any block to see what's inside it</div>
+    <p class="sub reveal frag" data-frag="5" style="max-width: 80ch; margin-top: clamp(0.6rem, 1.6vh, 1.1rem);">Write it once, where the agent can find it. It arrives when it's needed &mdash; and only then. Corollary: the model <strong>believes</strong> whatever is in the window, so stale context is worse than none.</p>
   </div>
-  <aside class="notes"><p>Walk the three windows left to right. Left: the instinct everyone has, "just give it everything". Middle: what a session actually starts with: the map and one-line hooks. Right: two triggers fired, two things loaded, still lots of room. Token numbers are illustrative, order of magnitude right.</p><p>Rule 2, stale context, gets its full failure story later; one line here is enough.</p></aside>
+  <aside class="notes"><p>Five steps on this slide (&rarr; or a tap), then the deck moves on. Step 0: the instinct everyone has, "just give it everything". Step 1: what a session actually starts with, the map and one-line hooks. Step 2: ten minutes later, nothing loaded yet. Step 3: "grill" matched a description, the skill body loads. Step 4: the map named one doc, it loads, still lots of room. Step 5: the corollary. Tap any block to show what is actually inside it. Token numbers are illustrative, order of magnitude right.</p><p>Rule 2, stale context, gets its full failure story later; one line here is enough.</p></aside>
 </section>
 
 
@@ -1691,7 +1762,10 @@ let idx = -1;
 function go(i) {
   i = Math.max(0, Math.min(slides.length - 1, i));
   if (i === idx) return;
+  const back = i < idx;
   idx = i;
+  setStep(slides[i], back ? fragSteps(slides[i]).length : 0);
+  document.querySelectorAll('.pdwin').forEach(closePeek);
   slides.forEach((s, k) => s.classList.toggle('active', k === i));
   [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
   bar.style.width = ((i + 1) / slides.length * 100) + '%';
@@ -1701,8 +1775,8 @@ function go(i) {
 }
 addEventListener('keydown', e => {
   if (e.target.matches('input, textarea')) return;
-  if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); go(idx + 1); }
-  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(idx - 1); }
+  if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
   else if (e.key === 'Home') go(0);
   else if (e.key === 'End') go(slides.length - 1);
   else if (e.key.toLowerCase() === 'f') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
@@ -1710,15 +1784,85 @@ addEventListener('keydown', e => {
   else if (e.key.toLowerCase() === 't') { toggleClock(); }
   document.body.classList.remove('hint');
 });
-let tx = 0;
-addEventListener('touchstart', e => tx = e.touches[0].clientX, { passive: true });
-addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) go(idx + (dx < 0 ? 1 : -1)); });
+/* touch: a clearly horizontal swipe advances; vertical movement is the slide scrolling on a phone */
+let tx = 0, ty = 0;
+addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+addEventListener('touchend', e => {
+  if (e.target.closest('.mnav, .nav-dots')) return;
+  const t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx < 0 ? next : prev)();
+});
+/* wheel: advances on stage; on a small window the slide itself scrolls instead */
 let wheelLock = 0;
-addEventListener('wheel', e => { if (e.target.closest('.notes-panel')) return; const t = Date.now(); if (t - wheelLock < 450 || Math.abs(e.deltaY) < 20) return; wheelLock = t; go(idx + (e.deltaY > 0 ? 1 : -1)); }, { passive: true });
-/* no click-to-advance: the copy slides and the notes panel are clickable; keys and clickers advance */
+addEventListener('wheel', e => {
+  if (e.target.closest('.notes-panel')) return;
+  const sc = slides[idx] && slides[idx].querySelector('.slide-content');
+  if (sc && sc.scrollHeight > sc.clientHeight + 2) return;
+  const t = Date.now(); if (t - wheelLock < 450 || Math.abs(e.deltaY) < 20) return; wheelLock = t; (e.deltaY > 0 ? next : prev)();
+}, { passive: true });
+/* the mobile arrow buttons */
+document.querySelector('.mprev').addEventListener('click', e => { e.stopPropagation(); prev(); });
+document.querySelector('.mnext').addEventListener('click', e => { e.stopPropagation(); next(); });
+/* no click-to-advance between slides: the copy slides, the notes panel and in-slide steps are clickable; keys and clickers advance */
 addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n && n - 1 !== idx) go(n - 1); });
 go(Math.max(0, (parseInt(location.hash.slice(1)) || 1) - 1));
 setTimeout(() => document.body.classList.remove('hint'), 6000);
+
+/* ===========================================
+   FRAGMENTS — .frag elements inside a slide reveal step by step before the deck moves on.
+   data-frag="n" groups elements into one step (steps in ascending order). Entering a slide
+   forward starts at step 0, entering it backward shows everything. On a slide that has steps,
+   a click/tap anywhere reveals the next one (and never advances the slide).
+   =========================================== */
+const MOBILE_Q = matchMedia('(max-width: 760px), (hover: none) and (pointer: coarse)');
+function fragSteps(s) { return s._steps || (s._steps = [...new Set([...s.querySelectorAll('.frag')].map(f => +f.dataset.frag || 1))].sort((a, b) => a - b)); }
+function setStep(s, n) {
+  const steps = fragSteps(s);
+  n = Math.max(0, Math.min(steps.length, n)); s._step = n;
+  const shown = steps.slice(0, n);
+  let newest = null;
+  s.querySelectorAll('.frag').forEach(f => {
+    const on = shown.includes(+f.dataset.frag || 1);
+    if (on && !f.classList.contains('on')) newest = f;
+    f.classList.toggle('on', on);
+  });
+  if (newest && MOBILE_Q.matches) setTimeout(() => newest.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 60);
+}
+function next() { const s = slides[idx]; if (s && (s._step || 0) < fragSteps(s).length) setStep(s, (s._step || 0) + 1); else go(idx + 1); }
+function prev() { const s = slides[idx]; if (s && (s._step || 0) > 0) setStep(s, s._step - 1); else go(idx - 1); }
+slides.forEach(s => {
+  if (!s.querySelector('.frag')) return;
+  s.addEventListener('click', e => {
+    if (e.target.closest('.blk, .peek, .corner, .notes-panel, .mnav')) return;
+    const n = s._step || 0; if (n < fragSteps(s).length) setStep(s, n + 1);
+  });
+});
+
+/* ===========================================
+   PEEK — on the progressive-disclosure slide, tap a block to see what is actually inside it.
+   data-peek holds the lines, "|"-separated; data-label overrides the header text.
+   =========================================== */
+function closePeek(win) { const p = win.querySelector('.peek'); if (p) p.remove(); win.querySelectorAll('.blk.open').forEach(x => x.classList.remove('open')); }
+document.querySelectorAll('.pdwin .blk[data-peek]').forEach(b => b.addEventListener('click', e => {
+  e.stopPropagation();
+  const win = b.closest('.pdwin'), was = b.classList.contains('open');
+  closePeek(win);
+  if (was) return;
+  b.classList.add('open');
+  const label = b.dataset.label || [...b.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('').trim();
+  const p = document.createElement('div'); p.className = 'peek';
+  p.innerHTML = '<div class="ph"><span>inside</span><b></b><i>&#x2715;</i></div>';
+  p.querySelector('b').textContent = label;
+  b.dataset.peek.split('|').forEach(line => { const d = document.createElement('div'); d.className = 'pl'; d.textContent = line.trim(); p.appendChild(d); });
+  p.addEventListener('click', ev => { ev.stopPropagation(); closePeek(win); });
+  win.appendChild(p);
+}));
+
+/* tables become cards on phones: copy each header onto its cells so the CSS can label them */
+document.querySelectorAll('table.tab').forEach(t => {
+  const hs = [...t.querySelectorAll('thead th')].map(th => th.textContent.trim());
+  t.querySelectorAll('tbody tr').forEach(r => [...r.children].forEach((td, i) => { if (i && hs[i]) td.dataset.h = hs[i]; }));
+});
 
 /* ===========================================
    SPEAKER VIEW — N shows the current slide's <aside class="notes">; T runs an elapsed clock

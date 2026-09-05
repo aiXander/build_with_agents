@@ -8,8 +8,11 @@ open decisions.
 
 > **Deck status:** rebuilt 2026-09-05 to the slide map in §4 (34 slides, same visual system as the
 > launch deck). Speaker view: `N` toggles per-slide notes (the §3 talk notes, condensed), `T` a
-> 60-minute elapsed clock. Keys and clickers advance; **clicking does not** (the copy slides and
-> the notes panel are clickable). Slides 27 and 34 are click-to-copy (or press the prompt's number).
+> 60-minute elapsed clock. Keys and clickers advance; **clicking does not** (the copy slides, the
+> notes panel and the steps on slide 18 are clickable). Slides 27 and 34 are click-to-copy (or press
+> the prompt's number). Slide 18 builds in five steps (→ or a tap) before the deck moves on; going
+> back into it shows all five. On phones and touch tablets each slide scrolls vertically and a swipe
+> or the on-screen arrows advance; the nav dots, key hints and notes panel are hidden there.
 > Slides 9 and 20 use HTML mock-ups (a terminal, the trimmed global file) instead of screenshots.
 > The four-years chart (slide 4) is redrawn from the *Four Years of Shipping* report; its data is
 > embedded in the deck's script (`SHIP_ROWS`), monthly totals exact, per-repo split to ~1K lines.
@@ -336,7 +339,7 @@ and leave it on the projector during the build.
 | 15 | **Tools — one verb each, described in text** | `find_matches` as the model sees it (schema + token cost) → the call the model writes → the result; what · when · in the brain | 3.3 |
 | 16 | **MCP servers — publish once, plug in anywhere** | Your agent plugged into three servers (browser, Odoo CRM, community brain), each "tools + instructions"; what · when · in the brain | 3.3 |
 | 17 | **Memory — written now, read back later** | Session 1 writes → memory store → session 2 recalls (the Pixiboo example); what · when · in the brain | 3.3 |
-| 18 | **Progressive disclosure** | Three windows side by side, block height = tokens: "paste everything" (over budget) vs session start vs "grill me on the memory bug" (two things just loaded, still fits); stale-context corollary | 3.3 |
+| 18 | **Progressive disclosure** | Three windows side by side, block height = tokens: "paste everything" (over budget) vs session start vs "grill me on the memory bug". Builds in five steps (→ or tap): session start → ten minutes later → the skill body loads → the doc loads, still fits → the stale-context corollary. Tap any block to peek at what is inside it | 3.3 |
 | 19 | **CLAUDE.md contains the most valuable tokens of your life** | Global vs project table; "the compressed residue of every mistake" | 3.4 |
 | 20 | **It's just prose** | The trimmed real global file, rendered as two-column prose | 3.4 |
 | 21 | **How to talk to me** | The five communication rules (earn its place / one example / no bare pointers / rich markdown / toolchain once) | 3.4 |

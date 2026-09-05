@@ -36,8 +36,12 @@ Data embedded in the deck's `<script>`: `SHIP_ROWS`/`SHIP_MONTHS`/`SHIP_NAMES` d
 four-years-of-shipping chart on slide 4 (monthly totals exact, per-repo split rounded to ~1K lines);
 `TALK_BUDGET_S` is the 60-minute clock.
 
-Deck controls: arrows/clicker advance, **clicking does not** (copy slides and the notes panel are
-clickable); `N` speaker notes, `T` elapsed clock; slides 27 and 34 are click-to-copy.
+Deck controls: arrows/clicker advance, **clicking does not** (copy slides, the notes panel and
+in-slide steps are clickable); `N` speaker notes, `T` elapsed clock; slides 27 and 34 are
+click-to-copy. Slide 18 has five in-slide steps: elements with class `frag` (grouped by
+`data-frag="n"`) reveal one step per arrow/tap before the deck moves on, and blocks with
+`data-peek` open an overlay showing what is inside them. Mobile (`max-width: 760px` or a coarse
+pointer): slides scroll vertically, tables become cards, swipe or the on-screen arrows advance.
 
 ## Provenance
 
