@@ -391,6 +391,26 @@ body.idle .nav-dots { opacity: 0; }
 .menu .use em { font-style: italic; color: var(--cream-dim); }
 .menu .mech { margin-top: auto; font-size: var(--kicker-size); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; color: var(--c, var(--red)); }
 
+/* what hurts -> what fixes it (skills are not stickers) */
+.pain { display: grid; grid-template-columns: 1fr 1fr; gap: 0 clamp(1.2rem, 3vw, 3rem); margin-top: clamp(0.8rem, 2.5vh, 1.8rem); }
+.pain .row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: clamp(0.5rem, 1.2vw, 1.2rem); padding: clamp(0.45rem, 1.3vh, 0.9rem) 0; border-bottom: 1px solid var(--line); }
+.pain .hurt { font-size: var(--body-size); color: var(--cream-dim); line-height: 1.35; font-weight: 300; }
+.pain .arw { color: var(--c, var(--red)); font-size: var(--body-size); line-height: 1.35; }
+.pain .fix { font-size: var(--body-size); color: var(--cream); line-height: 1.35; }
+.pain .fix b { color: var(--c, var(--red)); font-weight: 500; }
+.pain .fix small { display: block; font-size: var(--small-size); color: var(--cream-faint); line-height: 1.3; margin-top: 0.25em; }
+@media (max-width: 760px) { .pain { grid-template-columns: 1fr; } }
+
+/* what you do <-> what it is on a team (the manager riff) */
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0 clamp(1.2rem, 3vw, 3rem); margin-top: clamp(0.8rem, 2.5vh, 1.8rem); }
+.pair .row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: clamp(0.5rem, 1.2vw, 1.2rem); padding: clamp(0.45rem, 1.3vh, 0.9rem) 0; border-bottom: 1px solid var(--line); }
+.pair .a { font-size: var(--body-size); color: var(--cream); line-height: 1.35; }
+.pair .a em { color: var(--cream-dim); font-style: italic; }
+.pair .arw { color: var(--c, var(--red)); font-size: var(--body-size); line-height: 1.35; }
+.pair .b { font-size: var(--body-size); color: var(--c, var(--red)); line-height: 1.35; font-weight: 500; }
+.pair .b small { display: block; font-size: var(--small-size); color: var(--cream-faint); line-height: 1.3; margin-top: 0.25em; font-weight: 400; }
+@media (max-width: 760px) { .pair { grid-template-columns: 1fr; } }
+
 /* ===========================================
    BIG NUMBER — slide 15
    =========================================== */
@@ -1297,8 +1317,9 @@ Do not act until the frontier is empty.</div>
       <li style="--c: var(--green)"><span class="n">4</span><div><div class="l">Rich visual markdown</div><div class="d">Headers, tables, bold, code blocks. Scannable beats complete.</div></div></li>
       <li style="--c: var(--cream)"><span class="n">5</span><div><div class="l">Your toolchain, once</div><div class="d">For me: <code>uv</code> for Python, <code>ruff</code> for lint, VideoToolbox for ffmpeg &mdash; so it never guesses again.</div></div></li>
     </ol>
+    <p class="sub reveal" style="max-width: 92ch;">All five are <strong>always on, and they're yours.</strong> Which is exactly why they belong here and not in a skill: a skill fires at a moment &mdash; this fires at all of them, and no two people want the same five.</p>
   </div>
-  <aside class="notes"><p>These five go straight into the starter global CLAUDE.md in the takeaway pack. They're the rules people write in rung 3 of the build.</p></aside>
+  <aside class="notes"><p>These five go straight into the starter global CLAUDE.md in the takeaway pack. They're the rules people write in rung 3 of the build.</p><p>Say the last line out loud &mdash; it's the most common beginner mistake. People do package response style as an installable skill (there's a 27K-star repo that is just rule&nbsp;1). Wrong shape: you don't want it <em>sometimes</em>, and you don't want someone else's version of it. Sets up the shape test on "skills are not stickers".</p></aside>
 </section>
 
 
@@ -1401,6 +1422,29 @@ Do not act until the frontier is empty.</div>
     <p class="punch reveal">Code generation is the very last step &mdash; <em>the compile step</em> &mdash; and the part I now spend the least time on. If you can write a clear paragraph, you can build software. <em>The English is the work.</em></p>
   </div>
   <aside class="notes"><p>Most valuable beat for beginners and the part most talks skip. Open with the number. The corollary for the room: if you can write a clear paragraph, you can build software.</p></aside>
+</section>
+
+
+<!-- ===================================================
+     15b — THE JOB IS THE MEETING (the manager riff)
+     =================================================== -->
+<section class="slide" data-swarm="off" data-beat="Writing English">
+  <div class="corner tl"><span class="wc-mark"></span><span>The workflow</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">Your team ships in an hour and never tires of your questions</div>
+    <h2 class="display h2 reveal">The job is the meeting. <span class="ghost">The notes are the product.</span></h2>
+    <div class="pair reveal">
+      <div class="row" style="--c: var(--red)"><div class="a">The plan doc, rewritten ten times</div><div class="arw">&rarr;</div><div class="b">The brief<small>Nobody builds until it's unambiguous.</small></div></div>
+      <div class="row" style="--c: var(--magenta)"><div class="a"><em>"Review this as someone who didn't write it"</em></div><div class="arw">&rarr;</div><div class="b">Code review<small>Cold eyes. Findings first, no praise.</small></div></div>
+      <div class="row" style="--c: var(--blue)"><div class="a"><em>"Grill me"</em></div><div class="arw">&rarr;</div><div class="b">The 1:1<small>Where you find out they understood something else.</small></div></div>
+      <div class="row" style="--c: var(--blue)"><div class="a">CLAUDE.md</div><div class="arw">&rarr;</div><div class="b">The onboarding doc<small>Written once. Read by everyone, every day.</small></div></div>
+      <div class="row" style="--c: var(--magenta)"><div class="a"><em>"Step 1 only. Then stop."</em></div><div class="arw">&rarr;</div><div class="b">Scoping the ticket<small>Not doing the ticket.</small></div></div>
+      <div class="row" style="--c: var(--green)"><div class="a">The handover</div><div class="arw">&rarr;</div><div class="b">Meeting notes<small>Tomorrow's session wasn't in the room.</small></div></div>
+    </div>
+    <p class="sub reveal" style="max-width: 104ch;">A bad manager's meeting produces alignment and nothing else. Here <strong>the notes are executable</strong> &mdash; the code is regenerated from the doc, so improving the paragraph <em>is</em> shipping. That is where the 80% goes.</p>
+    <p class="sub reveal" style="max-width: 104ch; margin-top: 0.5em;"><strong>Where the metaphor breaks: your team has amnesia.</strong> A colleague remembers Tuesday. This one's entire world is the scrollback &mdash; anything you didn't write into a file was said to someone who has already left.</p>
+  </div>
+  <aside class="notes"><p>The frame that lands with founders and ops people, who have never written a line of code but have run a team. You are not a typist any more; you are a manager whose whole job is making sure everyone knows what we're building and what they pick up next.</p><p>Say both halves. The notes being executable is what saves this from being a bullshit-job joke &mdash; the paragraph you improve is the thing that gets built. The amnesia is the callback to "that scrollback is its entire world", and the reason CLAUDE.md and docs/ exist at all.</p></aside>
 </section>
 
 
@@ -1605,6 +1649,29 @@ Do not act until the frontier is empty.</div>
     </div>
   </div>
   <aside class="notes"><p>One line each, with the mechanism so it ties back to the six-ways slide. People who finish the ladder early pick anything from here.</p></aside>
+</section>
+
+
+<!-- ===================================================
+     21b — SKILLS ARE NOT STICKERS
+     =================================================== -->
+<section class="slide" data-swarm="off" data-beat="Use cases">
+  <div class="corner tl"><span class="wc-mark"></span><span>Use cases</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">The instinct after a talk like this: go and install twenty things</div>
+    <h2 class="display h2 reveal">Skills are not stickers. <span class="ghost">Install the pain, not the list.</span></h2>
+    <div class="pain reveal">
+      <div class="row" style="--c: var(--red)"><div class="hurt">Every answer opens with three paragraphs of throat-clearing</div><div class="arw">&rarr;</div><div class="fix">Three lines in your <b>CLAUDE.md</b><small>Always on, and yours. Not a download.</small></div></div>
+      <div class="row" style="--c: var(--magenta)"><div class="hurt">Your draft reads like a press release</div><div class="arw">&rarr;</div><div class="fix">A <b>humanizer</b> skill<small>Rewrite, hunt the tells, rewrite. Fires before you publish.</small></div></div>
+      <div class="row" style="--c: var(--blue)"><div class="hurt">It starts building before you've finished thinking</div><div class="arw">&rarr;</div><div class="fix"><b>grilling</b><small>In the pack. Twenty lines of English.</small></div></div>
+      <div class="row" style="--c: var(--magenta)"><div class="hurt">The page works, but it feels cheap and generic</div><div class="arw">&rarr;</div><div class="fix">An <b>interface-polish</b> pass<small>Spacing, hover states, hit areas, motion. Fires after it's built.</small></div></div>
+      <div class="row" style="--c: var(--blue)"><div class="hurt">You explain your stack again in every new session</div><div class="arw">&rarr;</div><div class="fix"><b>CLAUDE.md</b> first, memory tooling after<small>Most "it forgot" is a missing map.</small></div></div>
+      <div class="row" style="--c: var(--green)"><div class="hurt">You've typed the same three-step chore twice</div><div class="arw">&rarr;</div><div class="fix"><b>Write your own.</b><small>The one skill nobody else can give you.</small></div></div>
+    </div>
+    <p class="sub reveal" style="max-width: 104ch;"><strong>The shape test: does it fire at a moment, or always? Is it yours, or anyone's?</strong> Always <em>and</em> yours is <code>CLAUDE.md</code> &mdash; how you want to be talked to is not a download. A moment <em>and</em> anyone's is a skill, and that's what makes it worth sharing.</p>
+    <p class="sub reveal" style="max-width: 104ch; margin-top: 0.5em;"><strong>Write one before you install five</strong> &mdash; and read anything you do install: it's instructions you're letting a stranger put in your context window. Same care as <code>curl | sh</code>.</p>
+  </div>
+  <aside class="notes"><p>There's a post doing 600K views right now: "the 19 skills I'd install on a fresh setup", a star count next to every entry. The repos are real &mdash; I checked &mdash; and two or three are genuinely good. What's wrong is the causality: capability does not arrive by installing things. Everything in the last forty minutes said the leverage is in the context.</p><p>The two named ones are real and worth having: <em>blader/humanizer</em> (~45K stars) and <em>make-interfaces-feel-better</em> (~3K) &mdash; note that both fire at a <em>moment</em>, and neither encodes anybody's personal taste. The second one is usable this afternoon on whatever they built at rung 1. Point at how often the right-hand column is a paragraph you write instead. Land it on the last row. First slide to drop if the clock is tight &mdash; it survives in the pack.</p></aside>
 </section>
 
 

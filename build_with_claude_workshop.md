@@ -6,11 +6,11 @@ everything behind it: the brief, the story, the per-beat talk notes, the **slide
 is built from (§4)**, the build-session ladder, the takeaway pack, logistics, risks, and the
 open decisions.
 
-> **Deck status:** rebuilt 2026-09-05 to the slide map in §4 (34 slides, same visual system as the
+> **Deck status:** built to the slide map in §4 (37 slides, same visual system as the
 > launch deck). Speaker view: `N` toggles per-slide notes (the §3 talk notes, condensed), `T` a
 > 60-minute elapsed clock. Keys and clickers advance; **clicking does not** (the copy slides, the
-> notes panel and the steps on slide 18 are clickable). Slides 27 and 34 are click-to-copy (or press
-> the prompt's number). Slide 18 builds in five steps (→ or a tap) before the deck moves on; going
+> notes panel and the steps on slide 18 are clickable). Slides 27, 29 and 37 are click-to-copy (or
+> press the prompt's number). Slide 18 builds in five steps (→ or a tap) before the deck moves on; going
 > back into it shows all five. On phones and touch tablets each slide scrolls vertically and a swipe
 > or the on-screen arrows advance; the nav dots, key hints and notes panel are hidden there.
 > Slides 9 and 20 use HTML mock-ups (a terminal, the trimmed global file) instead of screenshots.
@@ -172,6 +172,18 @@ Two rules that follow directly, and that beginners get wrong:
 2. **Stale context is worse than no context.** The model *believes* what's in the window.
    A doc describing code that no longer exists is a lie the agent will act on. (Failure
    story for 3.5.)
+3. **More skills is not a better agent.** Only a skill's *body* is lazy — its description
+   sits in the window every session, forever, and the model has to choose between all of
+   them. Twenty half-used skills is a junk drawer you pay rent on. Install for a pain you
+   actually had this week; write your own for the chores you repeat. (Paid off in 3.6.)
+
+**The shape test — which of the six a thing belongs in.** Two questions: *does it fire at a
+moment, or always?* and *is it yours, or anyone's?* **Always + yours** is `CLAUDE.md`: how you
+want to be talked to, your toolchain, your never-without-asking list. Nobody else's version of
+that is any use to you, and you never want it *sometimes*. **A moment + anyone's** is a skill:
+"polish this page", "de-AI this draft", "grill me" — a procedure with a trigger, which is
+exactly what makes it worth packaging and sharing. People get this backwards constantly, and
+the tell is a skill folder full of preferences.
 
 ### 3.4 CLAUDE.md: the most valuable tokens of your life (8 min)
 
@@ -202,6 +214,12 @@ become part of the workshop"):
 - Rich visual markdown: headers, tables, bold, code blocks. Scannable beats complete.
 - Tell it your toolchain once (for me: `uv` for Python, `ruff` for lint, VideoToolbox for
   ffmpeg) so it never guesses.
+
+Worth one sentence on stage, because it is the most common beginner mistake: these five are
+**always on, and they are yours.** That is exactly why they belong in `CLAUDE.md` and not in a
+skill — a skill fires at a moment; this fires at all of them, and no two people want the same
+five. (People do package response style as an installable skill; it's the wrong shape *and* it
+isn't yours.)
 
 *The map, not the encyclopedia* (how to keep the file from bloating):
 - `CLAUDE.md` is what an agent reads cold at first contact: mission, conventions, commands,
@@ -236,6 +254,27 @@ last step — the compile step — and it's the part I now spend the *least* tim
 
 Corollary for the room: **if you can write a clear paragraph, you can build software.**
 The English *is* the work.
+
+**The frame that makes it click for a room of founders and ops people** — most of whom have
+never written a line of code but have all run a team: you are not a typist any more, you are a
+**manager whose entire job is the meeting.** Your team ships in the hour and never gets bored
+of your questions; what it needs from you is exactly what any team needs — to know what we're
+building, why, and what each of them picks up next. So the work moves into the artefacts a
+good manager produces, and slide 25 maps them one to one: the plan doc is **the brief**;
+"grill me" is **the 1:1** where you discover they understood something else; "step 1 only, then
+stop" is **scoping the ticket**, not doing it; the cold review is **code review**; `CLAUDE.md`
+is **the onboarding doc** every new hire reads; the handover is **the meeting notes**.
+
+Two things keep this from being a joke about bullshit jobs. Say both:
+
+- **The notes are executable.** A bad manager's meeting produces alignment and nothing else.
+  Here the code is regenerated from the doc — so improving the paragraph *is* shipping. That
+  is where the 80% goes, and why the English artefacts get better every loop while the code
+  is disposable.
+- **Your team has amnesia.** The one place the metaphor breaks, and the callback to slide 9
+  ("that scrollback is its entire world"). A colleague remembers Tuesday; this one doesn't.
+  Anything you didn't write into a file was said to someone who has already left — which is
+  the entire reason `CLAUDE.md` and `docs/` exist.
 
 **The recurring loop — every feature goes through it:**
 
@@ -310,6 +349,33 @@ write software next week. (Inspired by the "Master Claude in 28 days" poster; us
 | Schedule routines that run while you sleep | Routines |
 | Write your sprint doc, then have it argue with you | Grill me |
 
+**Then the correction, because the room will otherwise go home and start collecting.** There
+is a genre of post doing very well right now — *"the 19 skills I'd install on a fresh setup"*,
+600K views, a star count next to every entry. It isn't fraudulent: the repos are real (I
+checked them) and two or three are genuinely good. What's wrong is the causality it sells —
+that capability arrives by installing things. Everything in the previous forty minutes says
+the opposite: the leverage was in the context, and the best skill you will ever own is the
+twenty lines of English you write about the chore *you* repeat.
+
+So slide 33 is a **diagnosis, not a shopping list** — *what hurts → what fixes it* — and the
+thing to point at on stage is how often the fix is a paragraph in `CLAUDE.md` rather than a
+download. Two rules on screen:
+
+- **Write one before you install five.**
+- **Read anything you install.** A skill is instructions you are letting a stranger put in
+  your context window; it can tell your agent to do anything you can. Same care as `curl | sh`.
+
+Two real ones to name on the slide, because they show the *shape* of a skill worth installing
+— both fire at a specific moment and neither encodes anyone's personal taste in being talked
+to: **`blader/humanizer`** (~45K stars) rewrites a draft, hunts the AI tells, rewrites again —
+fires before you publish; **`jakubkrehel/make-interfaces-feel-better`** (~3K) does a pass purely
+on *feel* — spacing, hover states, dead hit areas, motion — and fires after a page is built,
+which is exactly where the room will be at 15:30 with the thing they made at rung 1. Third one
+is `grilling`, which they already have.
+
+Contrast that with row 1 of the same slide: the fix for a chatty agent is three lines in
+`CLAUDE.md`, not a download. Same shape test as 3.3 — always + yours vs a moment + anyone's.
+
 Then the bridge:
 
 - "In the next two hours you'll do all of it in miniature: build something, plug in an MCP
@@ -353,19 +419,21 @@ and leave it on the projector during the build.
 | 22 | **The map, not the encyclopedia** | What belongs in CLAUDE.md vs in a doc vs in git; the "would a cold agent be misled?" test; size budget | 3.4 |
 | 23 | **Docs are the agent's working memory** | TODO → reference → finished flow; "a map, not a mirror"; "docs follow code, never lead it" | 3.4 |
 | 24 | **80% of my tokens are English** | Big number; what the English is (plans, specs, reviews, handovers); "code is the compile step" | 3.5 |
-| 25 | **Analyze & Propose → Improve → Implement → Review** | The four-step loop as a cycle; one rule per step | 3.5 |
-| 26 | **80% of my prompts are one of these two** | The two verbatim prompts side by side, click-to-copy: *"Read `docs/TODO/<plan>.md` — analyze, scrutinize and improve this spec before I hand it off to a coding agent"* and *"Implement `docs/TODO/<plan>.md`"*; the asymmetry (01 typed ten times per feature, 02 once) | 3.5 |
-| 27 | **Grill me** | The skill in three lines: design tree · frontier rounds · you decide, it looks things up; live demo cue | 3.5 |
-| 28 | **Prompts I reuse** | Three prompts verbatim (opener, scoped build, cold review), click-to-copy; "full library in the pack" | 3.5 |
-| 29 | **Three times it went wrong** | The failure stories, one line + lesson each | 3.5 |
-| 30 | **Trust / Check** | Two columns | 3.5 |
-| 31 | **What people actually do with it** | The use-case menu (9 rows, mechanism column) | 3.6 |
-| 32 | **Six rungs** | The build ladder table | 3.6 |
-| 33 | **You are the imagination.** | Manifesto beat; Murmura mention | 3.6 |
-| 34 | **Go build** | Rules of the floor; helpers; "rung zero starts now" | 3.6 |
-| 35 | **Starter prompts** | Click-to-copy cheat sheet, one block per rung (see §5) — stays on screen | build |
+| 25 | **The job is the meeting** | *What you do → what it is on a team* (brief · cold review · 1:1 · onboarding doc · scoping the ticket · meeting notes); the notes are executable, so improving the paragraph is shipping; and the one place it breaks — your team has amnesia | 3.5 |
+| 26 | **Analyze & Propose → Improve → Implement → Review** | The four-step loop as a cycle; one rule per step | 3.5 |
+| 27 | **80% of my prompts are one of these two** | The two verbatim prompts side by side, click-to-copy: *"Read `docs/TODO/<plan>.md` — analyze, scrutinize and improve this spec before I hand it off to a coding agent"* and *"Implement `docs/TODO/<plan>.md`"*; the asymmetry (01 typed ten times per feature, 02 once) | 3.5 |
+| 28 | **Grill me** | The skill in three lines: design tree · frontier rounds · you decide, it looks things up; live demo cue | 3.5 |
+| 29 | **Prompts I reuse** | Three prompts verbatim (opener, scoped build, cold review), click-to-copy; "full library in the pack" | 3.5 |
+| 30 | **Three times it went wrong** | The failure stories, one line + lesson each | 3.5 |
+| 31 | **Trust / Check** | Two columns | 3.5 |
+| 32 | **What people actually do with it** | The use-case menu (9 rows, mechanism column) | 3.6 |
+| 33 | **Skills are not stickers** | *What hurts → what fixes it*, six rows — two named third-party skills (`humanizer`, an interface-polish pass), `grilling`, and twice a paragraph in `CLAUDE.md` rather than a download; then the shape test (a moment vs always, yours vs anyone's) and: write one before you install five, read anything you install | 3.6 |
+| 34 | **Six rungs** | The build ladder table | 3.6 |
+| 35 | **You are the imagination.** | Manifesto beat; Murmura mention | 3.6 |
+| 36 | **Go build** | Rules of the floor; helpers; "rung zero starts now" | 3.6 |
+| 37 | **Starter prompts** | Click-to-copy cheat sheet, one block per rung (see §5) — stays on screen | build |
 
-Slides 9, 20 and 27 are demo cues, not content slides — they should be visually quiet. Slides 5–8
+Slides 9, 20 and 28 are demo cues, not content slides — they should be visually quiet. Slides 5–8
 build the agent up step by step (text machine → tool as text → harness → loop) around one
 running example (`get_weather`); slides 12–17 are one slide per mechanism from the table on
 slide 11, each with the same three facts: what it is, when it's in the window, where it shows up
@@ -430,6 +498,10 @@ no keys. Have the filesystem one as a fallback for machines where the browser ex
 won't install. Tie back to slide 7: "you just added reach — new tools *and* the
 instructions for using them, in one plug."
 
+Say the safety line once, out loud, while everyone is connecting: an agent driving a browser
+should get **its own Chrome profile**, not the one with your mail, your bank and your password
+manager already logged in.
+
 ### 5.4 Rung 3 — Give it context (25 min)
 
 Three small artefacts, in this order, each proven by a before/after prompt:
@@ -439,9 +511,12 @@ Three small artefacts, in this order, each proven by a before/after prompt:
    Prove it: re-run the rung-1 "explain this" prompt and watch the answer get shorter.
 2. **Project `CLAUDE.md`** — ask Claude to write one for the rung-1 project: what it is,
    layout, three rules. Read it before saving; delete anything that just narrates the code.
-3. **One skill** — their preferred way of adding a feature, as `.claude/skills/<name>/SKILL.md`.
+3. **One skill — one they write themselves**, as `.claude/skills/<name>/SKILL.md`: their
+   preferred way of adding a feature, or any three-step chore they have already typed twice.
    Show the one-line description vs the body: that's progressive disclosure in their own
-   hands.
+   hands. Nobody installs somebody else's skill today — the point of the rung is the feeling
+   that a skill is just a file you wrote. For Monday, point at `skills.md` in the pack
+   (Appendix D).
 
 This is the rung where people realise the agent is *steerable*, not just capable — and that
 steering is done in English, in files, once.
@@ -454,7 +529,7 @@ steering is done in English, in files, once.
 - Then the plan-first prompt: five-step plan, flag the hardest part, build step one.
   Helpers roam.
 
-People who finish early: pick anything from the use-case menu (slide 21).
+People who finish early: pick anything from the use-case menu (slide 32).
 
 ### 5.6 Thunder talks (15 min)
 
@@ -474,11 +549,12 @@ created next to this doc as `workshop_pack/`:
 
 | File | What | Source |
 |---|---|---|
-| `README.md` | The ladder + the cheat-sheet prompts, plain markdown | §5 + slide 25 |
+| `README.md` | The ladder + the cheat-sheet prompts, plain markdown | §5 + slide 37 |
 | `CLAUDE.global.template.md` | A starter global CLAUDE.md, ~25 lines, with `<fill in>` slots | Appendix C |
 | `skills/grilling/SKILL.md` | The grilling skill, verbatim | Appendix A |
 | `prompts.md` | The prompt library | Appendix B |
 | `docs_workflow.md` | The TODO → reference → finished pattern in one page | 3.4 |
+| `skills.md` | The *what hurts → what fixes it* diagnosis, the Day 1 / Day 2 / Week 1 order, and the read-before-you-install rule | Appendix D |
 | `links.md` | Install page, MCP servers used, Claude in Chrome, Murmura | — |
 
 ---
@@ -526,7 +602,10 @@ artefacts. Ideal: people from the Murmura crowd who already use Claude Code dail
 
 The talk is scheduled at exactly 60 minutes with no buffer. Content is planned for ~50
 minutes. If running late: drop the third failure story, then the `life_goals.md` aside, then
-compress slide 14 (docs workflow) to one sentence — never cut the grill demo. If the talk
+slide 33 (*skills are not stickers* — it survives in the pack), then compress slide 23 (docs
+are the agent's working memory) to one sentence — never cut the grill demo. Slide 25 (*the job
+is the meeting*) can be said over slide 24 in two sentences if the clock is really gone, but
+it's the beat that lands with the non-coders in the room, so cut it last. If the talk
 runs over, cut rung-4 time, never rung-0 time.
 
 ---
@@ -540,7 +619,7 @@ runs over, cut rung-4 time, never rung-0 time.
       install on a clean Mac and a clean Windows machine.
 - [ ] **Real prompts for Appendix B**: the ones there now are drafts in my voice; replace with
       2–3 verbatim from actual sessions.
-- [ ] **Trim the global CLAUDE.md** into the show-and-tell version for slide 11 (strip
+- [ ] **Trim the global CLAUDE.md** into the show-and-tell version for slide 20 (strip
       personal context; keep the communication rules + docs workflow).
 - [ ] **Build the takeaway pack** (§6).
 - [ ] **Helpers**: names confirmed, briefed.
@@ -666,3 +745,49 @@ every file.
 - <editor / OS quirks>
 - <anything you always have to correct>
 ```
+
+## Appendix D — `skills.md` for the pack (what to install, and when not to)
+
+> Goes in `workshop_pack/skills.md`. Written for the person on the train home who is about to
+> install nineteen things.
+
+**A skill is a file.** A paragraph of English about how you like one job done. That makes them
+free to collect and very easy to over-collect. Only the *body* is lazy: the one-line
+description is in the window every session, forever, and the model has to choose between all
+of them. Twenty half-used skills is a junk drawer you pay rent on.
+
+**Diagnose, don't shop.**
+
+| It hurts when… | What actually fixes it |
+|---|---|
+| Every answer opens with three paragraphs of throat-clearing | Three lines in your global `CLAUDE.md`. Not a skill, not a download. |
+| It starts building before you have finished thinking | `grilling` — in this pack, 20 lines |
+| You explain your stack again in every new session | `CLAUDE.md` first; memory tooling only after. Most "it forgot" is a missing map. |
+| Your draft reads like a press release | a humanizer skill (`blader/humanizer`, ~45K ★): rewrite, hunt the tells, rewrite. Fires before you publish. |
+| The page works, but it feels cheap and generic | an interface-polish pass (`jakubkrehel/make-interfaces-feel-better`, ~3K ★): spacing, hover states, hit areas, motion. Fires after it's built. |
+| You have typed the same three-step chore twice | **write your own** — the one skill nobody else can give you |
+
+**The shape test — skill, or `CLAUDE.md`?** Two questions. *Does it fire at a moment, or
+always?* *Is it yours, or anyone's?* Always + yours belongs in `CLAUDE.md` — how you want to be
+talked to, your toolchain, your never-without-asking list; nobody else's version of that is any
+use to you. A moment + anyone's is a skill — "polish this page", "de-AI this draft", "grill me".
+A skill folder full of preferences is the tell that someone has it backwards.
+
+**An order, if you want one.**
+
+- **Day 1** — global `CLAUDE.md` (how to talk to me + never-without-asking), the two prompts
+  from the cheat sheet, `grilling`.
+- **Day 2** — a project `CLAUDE.md` on one real repo; one MCP server that removes a chore you
+  actually have.
+- **Week 1** — the `docs/TODO → reference → finished` folders; one skill you wrote yourself.
+  Then ship something before you install anything else.
+
+**Before you install anyone else's skill.** It is instructions you are letting a stranger put
+in your context window — it can tell your agent to do anything you can do. Read the `SKILL.md`
+first, the way you would read a script before piping it into a shell. Give an autonomous
+browser agent its own Chrome profile, not the one logged into your mail and your bank. Keep
+secrets out of prompts and skill files. Prefer local tools when the data is sensitive.
+
+**On star counts.** The lists going around ("the 19 skills I'd install on a fresh setup") point
+at mostly real repos — but stars measure attention, not fit. The set that helps you is the
+small one you actually trigger.

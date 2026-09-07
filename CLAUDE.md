@@ -37,7 +37,7 @@ four-years-of-shipping chart on slide 4 (monthly totals exact, per-repo split ro
 `TALK_BUDGET_S` is the 60-minute clock.
 
 Deck controls: arrows/clicker advance, **clicking does not** (copy slides, the notes panel and
-in-slide steps are clickable); `N` speaker notes, `T` elapsed clock; slides 26, 28 and 35 are
+in-slide steps are clickable); `N` speaker notes, `T` elapsed clock; slides 27, 29 and 37 are
 click-to-copy. Slide 18 has five in-slide steps: elements with class `frag` (grouped by
 `data-frag="n"`) reveal one step per arrow/tap before the deck moves on, and blocks with
 `data-peek` open an overlay showing what is inside them. Mobile (`max-width: 760px` or a coarse
