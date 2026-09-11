@@ -63,7 +63,10 @@ the last bar, Sept 2026, is a partial month — re-pulled 10 Sept 2026 and label
 chart, so re-pulling it means updating `SHIP_ROWS`' last row, the legend's `TOTALS`, and the stats
 strip together); `TALK_BUDGET_S` is the 60-minute clock. That chart holds its punchline back: the
 May–Sept 2026 columns and the two annotations are drawn into `.frag` groups by `drawShipChart()`
-and pop in on the slide's one click, so the first three years land alone first.
+and pop in on the slide's one click, so the first three years land alone first. Those early years
+peak at 24K lines/month — 8% of the 300K axis — so they are drawn `ZOOM`× tall against a second,
+30K y-axis and relaxed to true scale by that same click (`.zoom-frag` / `.axis-out` / `.axis-in`);
+raising `ZOOM` past 12 would push the tallest early bar out of the plot.
 
 Deck controls: arrows/clicker advance, **clicking does not** (copy slides, the notes panel and
 in-slide steps are clickable); `N` speaker notes, `T` elapsed clock; `.copy-slide` slides are

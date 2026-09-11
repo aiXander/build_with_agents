@@ -525,9 +525,24 @@ body.clock-on .clock { display: block; }
 .slide .ship .anno-frag:not(.on) { opacity: 0; filter: none; }
 .slide .ship .anno-frag.on { animation: annoin 0.5s var(--ease) both var(--d, 0s); }
 @keyframes annoin { from { opacity: 0; } to { opacity: 1; } }
+
+/* ZOOMED FIRST ACT — the pre-2026 bars peak at 24K lines/month, 8% of the 300K axis, i.e.
+   invisible. They are drawn ZOOM× tall against a 30K axis so the old normal reads at a real
+   height, and the same click that raises the May→Sept wall relaxes them down to true scale
+   while the two y-axes cross-fade. Origin/zoom are set in JS (baseline y, in viewBox units). */
+.slide .ship .zoom-frag { transform-box: view-box; transition: transform 0.9s cubic-bezier(0.45, 0.02, 0.2, 1); }
+.slide .ship .zoom-frag:not(.on) { opacity: 1; filter: none; transform: scaleY(var(--zoom, 10)); }
+.slide .ship .zoom-frag.on { opacity: 1; filter: none; transform: scaleY(1); }
+.slide .ship .axis-out { transition: opacity 0.45s var(--ease); }
+.slide .ship .axis-out:not(.on) { opacity: 1; filter: none; }
+.slide .ship .axis-out.on { opacity: 0; filter: none; }
+.slide .ship .axis-in { transition: opacity 0.6s var(--ease) 0.35s; }
+.slide .ship .axis-in:not(.on) { opacity: 0; filter: none; }
+.slide .ship .axis-in.on { opacity: 1; filter: none; }
 @media (prefers-reduced-motion: reduce) {
   .slide .ship .ship-frag.on, .slide .ship .anno-frag.on { animation: annoin 0.25s linear both 0s; }
   .slide .ship .ship-frag:not(.on) { transform: none; }
+  .slide .ship .zoom-frag, .slide .ship .axis-out, .slide .ship .axis-in { transition: none; }
 }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(0.5rem, 1.2vw, 1.2rem); margin-top: clamp(0.6rem, 1.8vh, 1.2rem); }
 .stat { border-top: 1px solid var(--line); padding-top: 0.5em; }
@@ -2759,16 +2774,30 @@ const SHIP_ROWS = [[0, 0, 0, 0, 0, 0, 0, 0, 3], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0,
   const TOTALS = ['612,866', '50,033', '49,267', '39,470', '27,879', '19,598', '19,383', '17,075', '161,311'];
   const W = 1000, H = 260, L = 52, R = 14, T = 26, B = 40;
   const plotW = W - L - R, plotH = H - T - B, n = SHIP_MONTHS.length, colW = plotW / n, MAX = 300000;
+  /* Two scales: the true one (MAX) and the zoomed first act (MAXZ = MAX / ZOOM), which the
+     pre-May-2026 bars live on until the slide's click. Tallest early month is 24.4K, so at
+     ZOOM = 10 it stands at ~81% of the plot instead of 8%. See the .zoom-frag CSS. */
+  const ZOOM = 10, MAXZ = MAX / ZOOM;
   const y = v => T + plotH - (v / MAX) * plotH;
+  const yz = v => T + plotH - (v / MAXZ) * plotH;
   const ns = 'http://www.w3.org/2000/svg';
   const el = (tag, attrs, text, parent) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; (parent || svg).appendChild(e); return e; };
   /* A .frag group: held back by setStep() until the slide's first click, then animated in. */
   const frag = (cls, delay) => { const g = document.createElementNS(ns, 'g'); g.setAttribute('class', 'frag ' + cls); g.dataset.frag = '1'; g.style.setProperty('--d', delay + 's'); svg.appendChild(g); return g; };
   const MB = SHIP_MONTHS.indexOf('2026-05');
+  const fullAxis = frag('axis-in', 0);    /* the real 300K grid — fades in with the wall */
+  const zoomAxis = frag('axis-out', 0);   /* the 30K grid it replaces — fades out */
+  const earlyG = frag('zoom-frag', 0);    /* every pre-May bar, held at ZOOM x until the click */
+  earlyG.style.transformOrigin = `0px ${T + plotH}px`;
+  earlyG.style.setProperty('--zoom', ZOOM);
   const mayAnno = frag('anno-frag', 0);
   for (let v = 0; v <= MAX; v += 50000) {
-    el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), class: 'grid' });
-    el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end', class: 'tick' }, v === 0 ? '0' : (v / 1000) + 'K');
+    el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), class: 'grid' }, null, fullAxis);
+    el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end', class: 'tick' }, v === 0 ? '0' : (v / 1000) + 'K', fullAxis);
+  }
+  for (let v = 0; v <= MAXZ; v += 5000) {
+    el('line', { x1: L, x2: W - R, y1: yz(v), y2: yz(v), class: 'grid' }, null, zoomAxis);
+    el('text', { x: L - 8, y: yz(v) + 4, 'text-anchor': 'end', class: 'tick' }, v === 0 ? '0' : (v / 1000) + 'K', zoomAxis);
   }
   SHIP_MONTHS.forEach((m, i) => {
     const [yr, mo] = m.split('-');
@@ -2776,10 +2805,12 @@ const SHIP_ROWS = [[0, 0, 0, 0, 0, 0, 0, 0, 3], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0,
     if (mo === '01' || mo === '04' || mo === '07' || mo === '10') el('text', { x: cx, y: T + plotH + 16, 'text-anchor': 'middle', class: 'tick' }, ['Jan', 'Apr', 'Jul', 'Oct'][['01', '04', '07', '10'].indexOf(mo)]);
     if (mo === '06' || (yr === '2022' && mo === '11')) el('text', { x: cx, y: T + plotH + 36, 'text-anchor': 'middle', class: 'tickb' }, yr);
     let acc = 0;
-    const into = i >= MB ? frag('ship-frag', +(0.14 + (i - MB) * 0.09).toFixed(2)) : null;
+    const early = i < MB;
+    const into = early ? earlyG : frag('ship-frag', +(0.34 + (i - MB) * 0.09).toFixed(2));
+    const minH = early ? 0.8 / ZOOM : 0.8;   /* the hairline floor must not be magnified too */
     SHIP_ROWS[i].forEach((v, s) => {
       if (v <= 0) return;
-      const top = y(acc + v), h = Math.max(y(acc) - top, v > 0 ? 0.8 : 0);
+      const top = y(acc + v), h = Math.max(y(acc) - top, minH);
       el('rect', { x: L + i * colW + 2.5, y: top, width: colW - 5, height: h, fill: COLORS[s] }, null, into);
       acc += v;
     });
@@ -2790,7 +2821,7 @@ const SHIP_ROWS = [[0, 0, 0, 0, 0, 0, 0, 0, 3], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0,
   el('text', { x: mx - 10, y: T + 56, 'text-anchor': 'end', class: 'anno-b' }, '12 May 2026', mayAnno);
   el('text', { x: mx - 10, y: T + 74, 'text-anchor': 'end', class: 'anno' }, 'motherbrain begins', mayAnno);
   el('text', { x: mx - 10, y: T + 94, 'text-anchor': 'end', class: 'anno' }, 'one scale, no truncation', mayAnno);
-  const septAnno = frag('anno-frag', 0.95);
+  const septAnno = frag('anno-frag', 1.15);
   const li = SHIP_MONTHS.length - 1, lx = L + li * colW + colW / 2, lv = SHIP_ROWS[li].reduce((a, b) => a + b, 0);
   el('line', { x1: lx, x2: lx, y1: T + 20, y2: y(lv) - 6, class: 'anno-line', opacity: 0.45 }, null, septAnno);
   el('text', { x: W - R, y: T + 12, 'text-anchor': 'end', class: 'anno' }, 'Sept \u2014 10 days in', septAnno);
