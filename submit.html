@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Show what you built &middot; Build with Claude</title>
+<meta name="description" content="Drop a link or a file from what you built at the Build with Claude workshop.">
+<link rel="stylesheet" href="/assets/wall-fonts.css">
+<style>
+:root{
+  --bg:#26262a; --well:#1b1b1e; --cream:#E7E2D1;
+  --cream-dim:rgba(231,226,209,0.78); --cream-faint:rgba(231,226,209,0.44);
+  --line:rgba(231,226,209,0.2); --red:#E73C3E; --green:#4FB37E; --blue:#4C68E0;
+  --font-display:"Futura Passata","Jost","Futura",sans-serif;
+  --font-body:"Spline Sans","Helvetica Neue",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--cream); font-family:var(--font-body);
+  font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  padding:clamp(1.4rem,4vw,3.5rem) clamp(1rem,4vw,3rem);
+}
+.wrap{max-width:1080px;margin:0 auto}
+.kicker{
+  font-family:var(--font-display); text-transform:uppercase; letter-spacing:.14em;
+  font-size:.72rem; color:var(--cream-faint); margin:0 0 .6rem;
+}
+h1{
+  font-family:var(--font-display); font-weight:700; line-height:.98;
+  font-size:clamp(2.2rem,6.5vw,4.2rem); margin:0 0 .5rem; letter-spacing:-.01em;
+}
+.lede{color:var(--cream-dim); max-width:46ch; margin:0 0 2rem; font-size:1.02rem}
+.lede a{color:var(--cream)}
+
+.cols{display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:clamp(1.2rem,3vw,2.6rem); align-items:start}
+@media (max-width:800px){ .cols{grid-template-columns:1fr} }
+
+.card{background:var(--well); border:1px solid var(--line); border-radius:14px; padding:clamp(1.1rem,2.6vw,1.8rem)}
+
+label{display:block; margin:0 0 1.1rem}
+.lab{
+  font-family:var(--font-display); text-transform:uppercase; letter-spacing:.1em;
+  font-size:.7rem; color:var(--cream-faint); display:block; margin-bottom:.35rem;
+}
+.lab b{color:var(--red); font-weight:700}
+.hint{display:block; font-size:.76rem; color:var(--cream-faint); margin-top:.34rem; line-height:1.4; letter-spacing:0; text-transform:none; font-family:var(--font-body)}
+input[type=text],input[type=email],input[type=url],textarea{
+  width:100%; background:rgba(231,226,209,0.05); color:var(--cream);
+  border:1px solid var(--line); border-radius:9px; padding:.62rem .75rem;
+  font:inherit; font-size:.95rem; transition:border-color .15s, background .15s;
+}
+input:focus,textarea:focus{outline:none; border-color:var(--cream-dim); background:rgba(231,226,209,0.09)}
+textarea{resize:vertical; min-height:74px}
+.pair{display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:start}
+@media (max-width:560px){ .pair{grid-template-columns:1fr} }
+
+.or{
+  display:flex; align-items:center; gap:.8rem; margin:.3rem 0 1.1rem;
+  font-family:var(--font-display); text-transform:uppercase; letter-spacing:.14em;
+  font-size:.66rem; color:var(--cream-faint);
+}
+.or::before,.or::after{content:""; flex:1; height:1px; background:var(--line)}
+
+.drop{
+  border:1px dashed var(--line); border-radius:11px; padding:1.1rem;
+  text-align:center; cursor:pointer; transition:border-color .15s, background .15s;
+  background:rgba(231,226,209,0.02);
+}
+.drop:hover,.drop.hot{border-color:var(--cream-dim); background:rgba(231,226,209,0.07)}
+.drop b{font-family:var(--font-display); letter-spacing:.02em}
+.drop small{display:block; color:var(--cream-faint); font-size:.78rem; margin-top:.2rem}
+.drop.filled{border-style:solid; border-color:var(--green); background:rgba(79,179,126,0.09)}
+input[type=file]{display:none}
+
+button{
+  font-family:var(--font-display); text-transform:uppercase; letter-spacing:.1em;
+  background:var(--red); color:#fff; border:0; border-radius:10px;
+  padding:.8rem 1.5rem; font-size:.92rem; cursor:pointer; transition:filter .15s;
+}
+button:hover{filter:brightness(1.12)}
+button[disabled]{opacity:.5; cursor:progress}
+
+.msg{margin-top:1rem; padding:.75rem .9rem; border-radius:9px; font-size:.9rem; display:none}
+.msg.err{display:block; background:rgba(231,60,62,0.14); border:1px solid rgba(231,60,62,0.45)}
+.msg.ok{display:block; background:rgba(79,179,126,0.13); border:1px solid rgba(79,179,126,0.45)}
+
+/* QR must be dark-on-light to scan, so it sits on its own cream tile. */
+.qr-card{text-align:center}
+.qr-tile{background:var(--cream); border-radius:12px; padding:.7rem; display:block; margin:0 auto .8rem; width:min(210px,100%)}
+.qr-tile svg{display:block; width:100%; height:auto; color:var(--well)}
+.qr-url{font-size:.78rem; color:var(--cream-faint); word-break:break-all; margin:0 0 1.2rem}
+
+.feedlink{
+  display:flex; align-items:center; justify-content:space-between; gap:.7rem;
+  text-decoration:none; color:var(--cream); border:1px solid var(--line);
+  border-radius:11px; padding:.85rem 1rem; transition:border-color .15s, background .15s;
+}
+.feedlink:hover{border-color:var(--cream-dim); background:rgba(231,226,209,0.05)}
+.feedlink .t{font-family:var(--font-display); letter-spacing:.02em; font-size:1.02rem}
+.feedlink .s{display:block; font-family:var(--font-body); font-size:.78rem; color:var(--cream-faint); letter-spacing:0}
+.feedlink .arw{color:var(--red); font-size:1.3rem}
+
+.hp{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden}
+.done{display:none}
+.done h2{font-family:var(--font-display); font-size:1.9rem; margin:0 0 .4rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">Build with Claude &middot; Wintercircus</p>
+  <h1>Show what you built</h1>
+  <p class="lede">Drop a link, or hand over the file itself. It lands on <a href="/feed">the feed</a> where the rest of the room can see it.</p>
+
+  <div class="cols">
+    <div class="card">
+      <form id="f" novalidate>
+        <div class="pair">
+          <label><span class="lab">Your name <b>*</b></span>
+            <input type="text" name="name" autocomplete="name" required maxlength="80"></label>
+          <label><span class="lab">Email <b>*</b></span>
+            <input type="email" name="email" autocomplete="email" required maxlength="160">
+            <span class="hint">Not shown on the feed &mdash; it is so we can reach you.</span></label>
+        </div>
+
+        <label><span class="lab">What is it called?</span>
+          <input type="text" name="title" maxlength="120" placeholder="A name for the thing"></label>
+
+        <label><span class="lab">Link</span>
+          <input type="url" name="link" maxlength="600" placeholder="https://"></label>
+
+        <div class="or">and / or</div>
+
+        <label id="droplab" class="drop" for="file" tabindex="0">
+          <b id="dropname">Attach a file</b>
+          <small id="drophint">.html, .md or .txt &mdash; up to 1 MB. Drag it here or click.</small>
+          <input type="file" id="file" accept=".html,.htm,.md,.markdown,.mdx,.txt">
+        </label>
+
+        <label style="margin-top:1.1rem"><span class="lab">One line about it</span>
+          <textarea name="note" maxlength="500" placeholder="What is it, what surprised you, what broke?"></textarea></label>
+
+        <div class="hp"><label>Leave this empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+        <button type="submit" id="go">Put it on the wall</button>
+        <div class="msg" id="msg"></div>
+      </form>
+
+      <div class="done" id="done">
+        <h2>It's up.</h2>
+        <p class="lede" style="margin-bottom:1rem">Thanks &mdash; go and look at what everyone else made.</p>
+        <a class="feedlink" href="/feed"><span><span class="t">Open the feed</span><span class="s">Everything the room has built</span></span><span class="arw">&rarr;</span></a>
+        <p style="margin-top:1rem"><a href="#" id="again" style="color:var(--cream-faint);font-size:.85rem">Add another one</a></p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card qr-card">
+        <span class="lab" style="margin-bottom:.7rem">Scan &middot; pass it on</span>
+        <span class="qr-tile"><svg viewBox="0 0 37 37" shape-rendering="crispEdges" role="img" aria-label="QR code to this page"><path d="M2 2.5h7m2 0h4m2 0h2m1 0h1m3 0h1m1 0h1m1 0h7m-33 1h1m5 0h1m2 0h1m1 0h1m5 0h2m1 0h3m3 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m1 0h5m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h4m1 0h1m2 0h2m3 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h6m3 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h2m1 0h1m1 0h1m1 0h2m1 0h1m3 0h1m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h2m1 0h1m2 0h1m1 0h1m1 0h1m3 0h1m-22 1h2m3 0h1m3 0h1m1 0h2m1 0h1m3 0h2m2 0h2m1 0h2m1 0h1m-30 1h2m1 0h1m5 0h1m3 0h2m1 0h1m2 0h2m1 0h3m1 0h1m2 0h1m2 0h1m-33 1h3m1 0h4m1 0h2m2 0h3m1 0h3m2 0h3m1 0h1m2 0h4m-33 1h2m2 0h2m1 0h2m2 0h1m3 0h2m1 0h1m3 0h1m1 0h2m1 0h3m1 0h2m-33 1h1m4 0h2m2 0h5m1 0h6m5 0h2m3 0h2m-32 1h4m3 0h1m3 0h3m2 0h2m3 0h3m1 0h2m1 0h4m-33 1h1m1 0h1m1 0h1m1 0h1m4 0h2m3 0h1m2 0h2m2 0h2m4 0h1m2 0h1m-30 1h1m3 0h1m1 0h1m1 0h3m2 0h1m1 0h1m1 0h1m1 0h1m2 0h2m2 0h1m-30 1h2m1 0h1m2 0h1m1 0h2m1 0h2m3 0h1m1 0h3m2 0h2m1 0h2m3 0h1m-32 1h6m1 0h1m1 0h1m1 0h1m2 0h3m1 0h3m2 0h2m1 0h1m2 0h1m1 0h2m-33 1h1m2 0h2m1 0h1m4 0h4m3 0h2m1 0h1m1 0h1m3 0h1m1 0h2m1 0h1m-32 1h3m1 0h1m2 0h1m1 0h1m1 0h3m1 0h2m2 0h1m1 0h1m5 0h2m-30 1h1m1 0h1m1 0h1m1 0h1m4 0h2m1 0h1m1 0h3m6 0h3m4 0h1m-32 1h3m1 0h1m1 0h3m4 0h2m2 0h4m1 0h2m1 0h2m1 0h1m2 0h1m-33 1h2m4 0h2m2 0h1m1 0h3m1 0h2m1 0h1m1 0h3m1 0h3m1 0h1m2 0h1m-31 1h2m1 0h1m6 0h1m1 0h1m1 0h1m5 0h1m3 0h1m2 0h1m1 0h2m-33 1h3m1 0h3m2 0h1m1 0h6m3 0h1m2 0h7m1 0h1m-24 1h1m1 0h1m3 0h3m1 0h2m2 0h1m1 0h1m3 0h1m2 0h2m-33 1h7m2 0h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m3 0h1m1 0h1m1 0h4m5 0h2m3 0h2m2 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m1 0h4m2 0h1m1 0h1m2 0h6m-29 1h1m1 0h3m1 0h1m2 0h4m3 0h2m1 0h2m2 0h1m1 0h1m1 0h3m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m1 0h5m1 0h1m2 0h1m2 0h2m1 0h3m-33 1h1m5 0h1m1 0h3m1 0h2m2 0h1m1 0h1m1 0h1m3 0h6m-30 1h7m2 0h3m3 0h2m1 0h1m1 0h1m3 0h2m1 0h2m3 0h1" stroke="currentColor" stroke-width="1" fill="none"/></svg></span>
+        <p class="qr-url">build-with-agents.vercel.app/submit</p>
+        <a class="feedlink" href="/feed"><span><span class="t">The feed</span><span class="s">See what others built</span></span><span class="arw">&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var form=document.getElementById('f'), msg=document.getElementById('msg'),
+      go=document.getElementById('go'), droplab=document.getElementById('droplab'),
+      fileInput=document.getElementById('file'), dropname=document.getElementById('dropname'),
+      drophint=document.getElementById('drophint'), done=document.getElementById('done');
+  var picked=null;
+  var MAX=1024*1024;
+  var OK=/\.(html?|md|markdown|mdx|txt)$/i;
+
+  function say(text,kind){ msg.textContent=text; msg.className='msg '+kind; }
+
+  function take(file){
+    if(!file) return;
+    if(!OK.test(file.name)){ say('Only .html, .md or .txt files, sorry.','err'); return; }
+    if(file.size>MAX){ say('That file is over 1 MB.','err'); return; }
+    var r=new FileReader();
+    r.onload=function(){
+      picked={name:file.name, content:String(r.result)};
+      droplab.classList.add('filled');
+      dropname.textContent=file.name;
+      drophint.textContent=Math.max(1,Math.round(file.size/1024))+' KB attached — click to swap it';
+      say('','');
+    };
+    r.onerror=function(){ say('Could not read that file.','err'); };
+    r.readAsText(file);
+  }
+
+  fileInput.addEventListener('change',function(){ take(fileInput.files[0]); });
+  droplab.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fileInput.click(); }});
+  ['dragenter','dragover'].forEach(function(ev){
+    droplab.addEventListener(ev,function(e){ e.preventDefault(); droplab.classList.add('hot'); });
+  });
+  ['dragleave','drop'].forEach(function(ev){
+    droplab.addEventListener(ev,function(e){ e.preventDefault(); droplab.classList.remove('hot'); });
+  });
+  droplab.addEventListener('drop',function(e){ take(e.dataTransfer.files[0]); });
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var d=new FormData(form);
+    var payload={
+      name:(d.get('name')||'').trim(), email:(d.get('email')||'').trim(),
+      title:(d.get('title')||'').trim(), link:(d.get('link')||'').trim(),
+      note:(d.get('note')||'').trim(), website:(d.get('website')||'').trim(),
+      file:picked
+    };
+    if(payload.name.length<2) return say('Your name, first.','err');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(payload.email)) return say('That email does not look right.','err');
+    if(!payload.link && !picked) return say('Add a link or attach a file — otherwise there is nothing to show.','err');
+
+    go.disabled=true; say('Sending…','ok');
+    fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(res){
+        go.disabled=false;
+        if(!res.ok){ return say(res.j.error||'Something went wrong.','err'); }
+        form.style.display='none'; done.style.display='block';
+      })
+      .catch(function(){ go.disabled=false; say('Network trouble — try again.','err'); });
+  });
+
+  document.getElementById('again').addEventListener('click',function(e){
+    e.preventDefault();
+    picked=null; fileInput.value='';
+    droplab.classList.remove('filled');
+    dropname.textContent='Attach a file';
+    drophint.textContent='.html, .md or .txt — up to 1 MB. Drag it here or click.';
+    form.querySelector('[name=title]').value='';
+    form.querySelector('[name=link]').value='';
+    form.querySelector('[name=note]').value='';
+    say('','');
+    done.style.display='none'; form.style.display='block';
+  });
+})();
+</script>
+</body>
+</html>

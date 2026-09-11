@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.fallow.tools/schema/fallow.schema.json",
+  // Nothing in this repo is imported by a bundler. The pages are loaded by the
+  // browser and every file in api/ is invoked by Vercel's router, so without
+  // this list fallow roots the whole graph as dead.
+  "entry": [
+    "api/*.js",
+    "*.html",
+    "assets/wall-fonts.css",
+    "scripts/*.mjs"
+  ]
+}

@@ -247,6 +247,10 @@ code, .mono { font-family: "SF Mono", "JetBrains Mono", Menlo, monospace; font-s
 .timing .what { font-size: var(--small-size); letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream-dim); font-weight: 500; }
 .timing .slot.hot .what { color: var(--red); }
 .ladder { display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(0.5rem, 1vw, 1rem); margin-top: clamp(1rem, 3vh, 2.2rem); }
+.ladder.four { grid-template-columns: repeat(4, 1fr); }
+.ladder.four .rung { min-height: clamp(7rem, 22vh, 13rem); }
+.rung .min.hhmm { font-size: clamp(1.1rem, 2.2vw, 2.2rem); }
+.rung.pause { background: rgba(231,226,209,0.02); }
 .rung { border: 1px solid var(--line); border-radius: clamp(0.5rem, 1vw, 1rem); background: rgba(231,226,209,0.06); padding: clamp(0.8rem, 1.6vw, 1.6rem) clamp(0.7rem, 1.2vw, 1.2rem); display: flex; flex-direction: column; gap: 0.5em; min-height: clamp(8rem, 30vh, 17rem); position: relative; overflow: hidden; }
 .rung::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--c, var(--red)); }
 .rung .min { font-family: var(--font-display); font-size: clamp(1.3rem, 2.8vw, 2.8rem); line-height: 1; color: var(--c, var(--red)); }
@@ -284,6 +288,7 @@ code, .mono { font-family: "SF Mono", "JetBrains Mono", Menlo, monospace; font-s
   color: var(--cream-dim); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 0.35em 0.9em; cursor: pointer; opacity: 0;
   transition: opacity 0.18s, color 0.18s, border-color 0.18s, background 0.18s; }
 .prompt:hover .p-copy { opacity: 1; color: var(--cream); border-color: var(--cream-faint); }
+.prompt:focus-within .p-copy { opacity: 1; }
 .prompt.copied .p-copy { opacity: 1; }
 .prompt.copied { background: rgba(31,46,40,0.9); border-color: rgba(79,179,126,0.5); }
 .prompt.copied .p-copy { color: var(--bg); background: var(--green); border-color: var(--green); }
@@ -326,6 +331,7 @@ code, .mono { font-family: "SF Mono", "JetBrains Mono", Menlo, monospace; font-s
 body.hint .keyboard-hint { opacity: 1; }
 body.idle { cursor: none; }
 body.idle .nav-dots { opacity: 0; }
+body.idle .nav-dots:focus-within { opacity: 1; }
 
 /* ===========================================
    TABLES — the stack table, the mechanism table, global-vs-project
@@ -501,6 +507,28 @@ body.clock-on .clock { display: block; }
 .ship-legend span { display: inline-flex; align-items: center; gap: 0.5em; }
 .ship-legend i { width: 0.9em; height: 0.9em; border-radius: 2px; display: inline-block; }
 .ship-legend b { color: var(--cream); font-weight: 500; }
+
+/* The 2026 wall is held back until a click: each May→Sept column pops up from the axis
+   (class .frag, so the deck's normal step machinery drives it), the annotations fade in
+   around them. The groups are built in drawShipChart(); --d staggers them. */
+.slide .ship .ship-frag { transition: none; transform-box: fill-box; transform-origin: 50% 100%; }
+.slide .ship .ship-frag:not(.on) { opacity: 0; filter: none; transform: scaleY(0.004); }
+.slide .ship .ship-frag.on { animation: barpop 0.66s cubic-bezier(0.22, 1.35, 0.36, 1) both var(--d, 0s); }
+@keyframes barpop {
+  0%   { opacity: 0; transform: scaleY(0.004); filter: brightness(2.8) saturate(1.6); }
+  38%  { opacity: 1; }
+  62%  { transform: scaleY(1.07); }
+  82%  { transform: scaleY(0.985); }
+  100% { opacity: 1; transform: scaleY(1); filter: brightness(1) saturate(1); }
+}
+.slide .ship .anno-frag { transition: none; }
+.slide .ship .anno-frag:not(.on) { opacity: 0; filter: none; }
+.slide .ship .anno-frag.on { animation: annoin 0.5s var(--ease) both var(--d, 0s); }
+@keyframes annoin { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .slide .ship .ship-frag.on, .slide .ship .anno-frag.on { animation: annoin 0.25s linear both 0s; }
+  .slide .ship .ship-frag:not(.on) { transform: none; }
+}
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(0.5rem, 1.2vw, 1.2rem); margin-top: clamp(0.6rem, 1.8vh, 1.2rem); }
 .stat { border-top: 1px solid var(--line); padding-top: 0.5em; }
 .stat .v { font-family: var(--font-display); font-size: clamp(1.1rem, 2.2vw, 2.2rem); line-height: 1; color: var(--cream); }
@@ -700,6 +728,29 @@ body.clock-on .clock { display: block; }
 @keyframes fragin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 /* ===========================================
+   SHOW-AND-TELL — the closing slide. The QR points at /submit on this same site;
+   /feed is the wall it lands on. The code must stay dark-on-light to scan from the
+   back of the room, hence its own cream tile rather than the deck's dark ground.
+   =========================================== */
+.wall { display: grid; grid-template-columns: minmax(0, 1.1fr) auto; gap: clamp(1.5rem, 5vw, 4.5rem); align-items: center; }
+.wall .say { font-size: var(--body-size); color: var(--cream-dim); line-height: 1.5; }
+.wall .say b { color: var(--cream); }
+.wall .steps { list-style: none; margin: 1.2em 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.55em; }
+.wall .steps li { position: relative; padding-left: 1.9em; font-size: var(--body-size); line-height: 1.45; color: var(--cream-dim); }
+.wall .steps li::before { content: counter(wallstep); counter-increment: wallstep; position: absolute; left: 0; top: 0; font-family: var(--font-display); color: var(--red); font-size: 0.9em; }
+.wall .steps { counter-reset: wallstep; }
+.wall .steps b { color: var(--cream); }
+.wall .qr { text-align: center; }
+.wall .qr .tile { background: var(--cream); border-radius: 14px; padding: clamp(0.6rem, 1.2vw, 1rem); display: block; width: clamp(180px, 24vw, 330px); margin-inline: auto; }
+.wall .qr .tile svg { display: block; width: 100%; height: auto; color: var(--well); }
+.wall .qr .tile { transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+.wall .qr .tile:hover, .wall .qr .tile:focus-visible { transform: translateY(-2px); box-shadow: 0 0.5rem 1.6rem rgba(0,0,0,0.45); outline: none; }
+.wall .qr .url { margin-top: 0.7em; font-family: "SF Mono", Menlo, monospace; font-size: var(--small-size); color: var(--cream-dim); letter-spacing: 0.01em; }
+.wall .qr .url .lnk { color: inherit; font-family: inherit; }
+@media (max-width: 900px) { .wall { grid-template-columns: 1fr; justify-items: start; gap: 1.6rem; } }
+
+
+/* ===========================================
    MOBILE — phones and touch tablets. The stage deck fits every slide to one screen; here each
    slide scrolls vertically instead, and a swipe or the arrow buttons advance. Grids stack, tables
    become cards (data-h on each cell comes from the script), the nav dots and key hints go.
@@ -729,7 +780,7 @@ body.clock-on .clock { display: block; }
   .prompts { grid-auto-rows: auto; }
   .prompts.five .prompt { grid-column: span 1 !important; }
   .flow-arrow, .io .arr { display: none; }
-  .step, .cap, .caps.five .cap, .caps.two .cap, .rung, .split .col, .menu .item, .io .box { min-height: 0; }
+  .step, .cap, .caps.five .cap, .caps.two .cap, .rung, .ladder.four .rung, .split .col, .menu .item, .io .box { min-height: 0; }
   .doc .sec { grid-template-columns: 1fr; gap: 0.2em; }
   .doc .sec .h { white-space: normal; }
   .win .tools-decl .td { grid-template-columns: 1fr; gap: 0; padding-left: 0.8em; }
@@ -771,10 +822,25 @@ body.clock-on .clock { display: block; }
 .visual-slide.art-ready .workshop-art { display: flex; }
 .visual-slide.art-ready .art-fallback { display: none; }
 .visual-slide .art-caption { margin-top: 0; max-width: none; }
+/* A concise reading rail under new illustrations; detailed copy stays in the fallback. */
+.art-summary { display: none; }
+.art-ready .art-summary { display: block; flex: none; border-top: 1px solid var(--line); padding-top: 0.65em; }
+.art-summary .lnk { margin-left: 0.8em; white-space: nowrap; }
+.visual-slide .slide-content > .kicker,
+.visual-slide .slide-content > .display,
+.visual-slide .slide-content > .art-caption { flex-shrink: 0; }
 @media (max-width: 760px), (hover: none) and (pointer: coarse) {
   .workshop-art { flex: none; }
   .workshop-art img { height: auto; }
   .visual-slide.art-ready .workshop-art:has(+ .art-fallback:last-child) { margin-bottom: auto; }
+}
+/* The manifesto keeps its copy beside a square illustration. */
+.imagination-slide.art-ready .slide-content { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: clamp(1.5rem, 4vw, 4rem); }
+.imagination-slide.art-ready .big { font-size: clamp(2rem, 4.3vw, 4.8rem); }
+.imagination-slide.art-ready .workshop-art { width: 100%; aspect-ratio: 1; max-height: 72vh; }
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  .imagination-slide.art-ready .slide-content { display: flex; align-items: stretch; }
+  .imagination-slide.art-ready .workshop-art { max-height: none; }
 }
 </style>
 </head>
@@ -804,12 +870,46 @@ body.clock-on .clock { display: block; }
     <div class="title-block">
       <h1 class="display title reveal">Build<br><span class="brain">with Claude.</span></h1>
       <p class="tagline reveal">Skills, tools &amp; MCP servers &mdash; for beginners 🌶️. What an AI agent actually is, and how to ship something yourself.</p>
-      <p class="meta reveal">Xander Steenbrugge &nbsp;·&nbsp; 13:00 talk &nbsp;·&nbsp; 14:00 – 16:00 build &nbsp;·&nbsp; bring your laptop</p>
+      <p class="meta reveal">Xander Steenbrugge &nbsp;·&nbsp; 13:00 – 16:00 &nbsp;·&nbsp; talk, break, build &nbsp;·&nbsp; bring your laptop</p>
     </div>
   </div>
   <aside class="notes"><p><b>Open cold with the live demo</b> of the Community Brain in the Wintercircus app before any theory. Ask it something real: "who here has scaled a hardware product?". Keep it under 3 minutes; fallback = the screen recording on local disk.</p><p>Optional: the "No women?" exchange (Tessa Ickx, Pixiboo, 2026-09-05) &mdash; the agent ran the search again, came back empty, and said "I won't pad the list". Judgment sells better than features.</p></aside>
 </section>
 
+<!-- ===================================================
+     1b — THE AGENDA (how the three hours run)
+     =================================================== -->
+<section class="slide" data-swarm="calm" data-beat="Welcome">
+  <div class="corner tl"><span class="wc-mark"></span><span>The plan</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">13:00 &ndash; 16:00 &middot; Wintercircus &middot; bring your laptop</div>
+    <h2 class="display h2 reveal">Three hours. <span class="ghost">Half of it is you building.</span></h2>
+    <div class="ladder four reveal">
+      <div class="rung" style="--c: var(--red)">
+        <div class="min hhmm">13:00<small>75 min</small></div>
+        <div class="lbl">The talk</div>
+        <div class="desc">What an AI agent actually is, how to feed it context, and how I ship with it. <em>Interrupt me &mdash; questions are the point.</em></div>
+      </div>
+      <div class="rung pause" style="--c: var(--amber)">
+        <div class="min hhmm">14:15<small>15 min</small></div>
+        <div class="lbl">Break</div>
+        <div class="desc">Coffee, laptops open, helpers on the floor. <em>Get Claude installed now if it isn&rsquo;t yet.</em></div>
+      </div>
+      <div class="rung" style="--c: var(--blue)">
+        <div class="min hhmm">14:30<small>75 min</small></div>
+        <div class="lbl">You build</div>
+        <div class="desc">Everyone on their own project. Common track to start from, race ahead if you want. <em>Helpers roam.</em></div>
+      </div>
+      <div class="rung" style="--c: var(--green)">
+        <div class="min hhmm">15:45<small>15 min</small></div>
+        <div class="lbl">Show &amp; tell</div>
+        <div class="desc">60 seconds on stage, if you feel like it. Optional, and live failure is welcome. <em>Broken counts.</em></div>
+      </div>
+    </div>
+    <p class="sub reveal">Nothing to prepare. If you leave with one thing that runs and is <strong>yours</strong>, the afternoon worked.</p>
+  </div>
+  <aside class="notes"><p>Thirty seconds, no more &mdash; it exists so nobody spends the talk wondering when they get to touch a keyboard. Say the two things people actually want to know: <b>there is a break</b>, and <b>half the afternoon is hands-on</b>.</p><p>Flag the show-and-tell as opt-in now, not at 15:45 &mdash; people build differently when they know something might be shown. Say "broken counts" out loud; it is what makes anyone volunteer.</p></aside>
+</section>
 
 <!-- ===================================================
      2 — FOUR YEARS OF SHIPPING (the chart)
@@ -818,7 +918,7 @@ body.clock-on .clock { display: block; }
   <div class="corner tl"><span class="wc-mark"></span><span>The hook</span></div>
   <div class="slide-content">
     <div class="kicker reveal">Every source line I authored, four years, 46 repositories &middot; github.com/aiXander</div>
-    <h2 class="display h2 reveal" style="font-size: calc(var(--h2-size) * 0.82)">Four years of shipping. <span class="ghost">Three quarters of it since May.</span></h2>
+    <h2 class="display h2 reveal" style="font-size: calc(var(--h2-size) * 0.82)">Four years of shipping. <span class="ghost frag" data-frag="1">Three quarters of it since May.</span></h2>
     <div class="ship reveal">
       <svg id="ship-chart" viewBox="0 0 1000 260" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Source lines added per month, stacked by repository, September 2022 to September 2026"></svg>
       <div class="ship-legend" id="ship-legend"></div>
@@ -832,7 +932,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>Not a slope: a <b>step function</b>, and the step is the day I started working this way (12 May 2026, motherbrain begins). One scale, no truncation, which is why the first three years look flat: Eden, the ComfyUI pipelines, the LED installation are all there, two orders of magnitude below the current line.</p><p>The Markdown number is the bridge to the "80% English" beat: a fifth of everything I wrote is docs, because in this codebase docs are working memory for the agents.</p></aside>
 </section>
-
 
 <!-- ===================================================
      4 — ARCHITECTURE: what the thing actually is
@@ -848,7 +947,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>Don't walk every box — 30 seconds, finger on the screen. Frontend, auth, backend, agents, database, voice, memory. The point is only: <b>this is a real system, not a toy</b>, and one person built it in six months.</p><p>Then flip to the table: I had never touched most of these before March.</p></aside>
 </section>
-
 
 <!-- ===================================================
      5 — THE STACK TABLE
@@ -874,7 +972,6 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>The reveal after the demo. "I had never touched most of this before March." Land the thread: the only thing that changed was <b>how I work</b>.</p></aside>
 </section>
 
-
 <!-- ===================================================
      3 — THE HOOK: the one sentence
      =================================================== -->
@@ -887,7 +984,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>Say it: Claude is the senior engineer who knows every stack and never gets tired of questions. You are the architect: what to build, for whom, and whether it's right.</p><p>Everything in the three hours hangs off these two lines. The scarce resource is no longer implementation skill: it's the spark, the judgment, and <b>the quality of the context you hand the model</b>.</p><p>Goal of the day: people leave believing they can build the thing in their head, plus the first 200 metres of the path and the habits that took me four months.</p></aside>
 </section>
-
 
 <!-- ===================================================
      4a — AN LLM IS A TEXT MACHINE
@@ -923,7 +1019,6 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>Strip it down: the model is a function from text to text. It has read a lot, so it guesses well. But it can't <b>do</b> anything: no internet, no files, no clock, no memory once the call ends. Every superpower an agent has must be built out of this one text-in, text-out machine. Keep the umbrella example running through the next three slides.</p></aside>
 </section>
 
-
 <!-- ===================================================
      4b — A TOOL IS A DESCRIPTION; A CALL IS JUST TEXT
      =================================================== -->
@@ -952,7 +1047,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>This is the moment people get it: the model never "calls" anything. It reads a text description of a tool, and when it wants the tool it <b>writes</b> a call as text, in the format it was told. Then it stops. Point at the blank line: nothing has happened yet.</p><p>No registration, no plugin, no training: a tool exists <b>because a paragraph describing it was pasted into the window</b>, in front of your message, on every request. Footnote if asked: modern models are trained on this format, so the call comes back as a structured block rather than the &lt;call&gt; convention shown here &mdash; same idea, tidier plumbing.</p></aside>
 </section>
-
 
 <!-- ===================================================
      4c — THE HARNESS CATCHES IT AND RUNS REAL CODE
@@ -994,7 +1088,6 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>Colour is the point here: <b>red is the model, green is the harness</b>. Say it once, then just point. The harness is boring code: read the output, regex for the call, run the real function, append the result, call the model again. Claude Code is exactly this loop with more tools. Emphasise: the <b>model</b> never touches the world, the <b>harness</b> does, and everything the harness does is visible in the window afterwards.</p></aside>
 </section>
 
-
 <!-- ===================================================
      HARNESS VISUAL — the software around the model
      =================================================== -->
@@ -1011,7 +1104,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>The harness is the ordinary software around the model: it assembles context, calls the model, runs requested tools and feeds results into the next call. The enclosure is a software boundary, not a claim that the model runs on the same machine. This is the picture of what the last two slides did: follow the arrows once, then abstract it into the loop on the next slide.</p></aside>
 </section>
-
 
 <!-- ===================================================
      4d — A MODEL. SOME TOOLS. A LOOP.
@@ -1049,7 +1141,6 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>Say: the model only ever writes text, and that is why you can safely hand it more and more tools. Now <b>show a real tool call happening</b>: open Claude Code, ask something that needs a file read, narrate: "that's the model deciding, that's the tool call, that's the result coming back into the window." Plant the seed for the window slides coming up: everything it knows about your problem is whatever is inside that one window right now.</p></aside>
 </section>
 
-
 <!-- ===================================================
      4e — WHERE DOES THE HARNESS RUN?
      =================================================== -->
@@ -1069,7 +1160,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>Follow the location of the harness, not the model: all three examples call a remote model. A laptop sleeping suspends local execution; closing the lid need not cause sleep in every setup. Hosted chat keeps the conversation available, but that does not promise an unlimited background task. It can use uploaded files and explicitly connected tools, rather than automatically seeing your disk.</p><p>For work that should continue independently of your laptop, run the harness on an always-on remote machine, with a process that survives disconnecting. Files must be available there and tools configured there. It still stops at completion, approval requests, errors or budgets. Same loop, different room.</p></aside>
 </section>
-
 
 <!-- ===================================================
      5 — IT ONLY KNOWS WHAT IS IN THE WINDOW (demo cue)
@@ -1104,7 +1194,6 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>Demo cue: point at the real terminal &mdash; that scrollback, top to bottom, is the left-hand box. Everything the agent knows about your problem is in it; everything else in the world is the right-hand box.</p><p>The line that lands: when an agent does something stupid, it is almost never "the model is dumb" &mdash; it is that the thing it needed was in the right-hand box. And because the window is finite you cannot just shove everything in. Which is the whole next beat.</p></aside>
 </section>
 
-
 <!-- CONTEXT WINDOW — the model's working space, before context rot -->
 <section class="slide visual-slide" data-swarm="off" data-beat="What an agent is" id="context-window">
   <div class="corner tl"><span class="wc-mark"></span><span>Under the hood</span></div>
@@ -1119,7 +1208,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>A token is a small piece of text, sometimes a word, sometimes part of one. The context window is the finite working space available to the model for a response; it is not its training knowledge. Inputs fill the window. Attention connects information across the loaded context, internal layers process it, and the model predicts another token. Append that token and repeat. Reasoning models may generate thinking tokens before their final answer; reasoning is not one separate magic box that finishes before any tokens are generated.</p><p>All loaded context can inform the next token, with different attention weights. This does not mean perfect recall, equal attention to every word, or processing unused capacity. Cached computation can avoid recomputing old tokens. That distinction leads directly to context rot.</p><p>Scale: some models support 1M-token windows; limits vary by model and product. Roughly 750,000 English words, compared with roughly a million words for the seven Harry Potter novels; the series is a scale analogy, not an exact fit. Sources: <a href="https://claude.com/blog/1m-context">Anthropic on 1M context</a>; <a href="https://ai.google.dev/gemini-api/docs/tokens">Google on tokens versus words</a>.</p></aside>
 </section>
-
 
 <!-- ===================================================
      5b — CONTEXT ROT (the window fills, the answers fade)
@@ -1153,7 +1241,6 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>Follows straight on from the hard edge: the window has a limit, but the answers get worse long before you hit it: in hour three the model still reads everything and holds on to less &mdash; the rule from hour one is gone, it repeats itself, it drifts. And every turn now costs the whole scrollback.</p><p>The real fix is the handover prompt from the pack: what changed, what was decided, what's open, into a markdown doc, then a fresh session that reads it. <code>/compact</code> is the lazy version &mdash; fine, but you can't read or correct what it kept. Say the habit: long session, write it down, new session. Then the pivot &mdash; everything is context engineering &mdash; and the six ways to put the right information into the window.</p></aside>
 </section>
 
-
 <!-- ===================================================
      6 — EVERYTHING IS CONTEXT ENGINEERING
      =================================================== -->
@@ -1166,7 +1253,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>The problem in one line: the model is brilliant and has amnesia. So the whole craft is the right context, at the right moment, and nothing else. Every mechanism people hear about &mdash; tools, MCP, skills, .md files, memory &mdash; is one answer to that.</p></aside>
 </section>
-
 
 <!-- ===================================================
      7 — SIX WAYS TO PUT THINGS IN THE WINDOW
@@ -1193,7 +1279,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>The three words in the workshop title are three of the six. One line on what each <i>is</i>: a prose file read at start; markdown in the repo; a folder of instructions for one kind of task; a function the model may call; a standard plug exposing tools plus instructions; whatever gets written down to read back later. Walk the "when loaded" column: that's the whole trick &mdash; not <i>what</i> you tell it, but <i>when</i> it gets there.</p></aside>
 </section>
-
 
 <!-- ===================================================
      7a — CLAUDE.md
@@ -1225,7 +1310,6 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>The file the model reads first, every time. No syntax, no config. It's a <b>map</b>: enough to orient, and pointers to everything deeper. Mine has a budget of ~4,500 words and I defend it. Two levels: global (how to talk to me) and project (how this repo works). Full treatment comes in the CLAUDE.md beat; here just the mechanism.</p></aside>
 </section>
 
-
 <!-- ===================================================
      10 — CLAUDE.md: THE MOST VALUABLE TOKENS OF YOUR LIFE
      =================================================== -->
@@ -1244,9 +1328,25 @@ body.clock-on .clock { display: block; }
     <p class="punch reveal">Written <em>from corrections</em>. Every time you fix the agent, the fix goes in the file &mdash; so you never say it twice.</p>
     <p class="sub reveal" style="max-width: none;"><a class="lnk" href="global_claude_md.html" target="_blank" rel="noopener">Read my real global file, cut for the room&nbsp;&nearr;</a></p>
   </div>
-  <aside class="notes"><p>The link opens the public cut of my real global file in a new tab: scroll it on screen during the "it's just prose" beat, then come back to the deck. Two levels, two jobs. The reason it's the most valuable file you own: it's written from corrections. Every time the agent does something you had to fix, the fix goes in the file.</p></aside>
+  <aside class="notes"><p>The link opens the public cut of my real global file in a new tab: scroll it on screen here, then come back to the deck. Two levels, two jobs. The reason it's the most valuable file you own: it's written from corrections. Every time the agent does something you had to fix, the fix goes in the file.</p></aside>
 </section>
 
+<!-- ===================================================
+     GLOBAL / PROJECT — one shared instruction layer, one map per project
+     =================================================== -->
+<section class="slide visual-slide" id="claude-levels" data-swarm="off" data-beat="CLAUDE.md">
+  <div class="corner tl"><span class="wc-mark"></span><span>CLAUDE.md</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">One global file. One file per project.</div>
+    <h2 class="display h2 reveal">Same you. <span class="red">Different projects.</span></h2>
+    <figure class="workshop-art reveal" data-art="claude-levels">
+      <img alt="One global ~/.claude/CLAUDE.md supplies how-to-work-with-me instructions across projects. Each project has its own CLAUDE.md explaining where things live and how to use that project." decoding="async">
+    </figure>
+    <p class="punch art-fallback reveal"><code>~/.claude/CLAUDE.md</code>: how to work with me, across every project.<br><code>&lt;project&gt;/CLAUDE.md</code>: how to find things here and use this project.</p>
+    <p class="sub art-caption reveal"><strong>Global:</strong> your preferences. <strong>Project:</strong> its map, commands and conventions.</p>
+  </div>
+  <aside class="notes"><p>One global file for your user account, shared across projects: how to communicate with you and work with you. Each project adds its own local map and operating instructions. The global file is not copied into each repo; both layers provide context when you work there.</p></aside>
+</section>
 
 <!-- ===================================================
      13 — THE MAP, NOT THE ENCYCLOPEDIA
@@ -1296,6 +1396,26 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>The test for every sentence: would a cold agent be misled without it? Per-feature depth goes in its own doc, history goes in git, in-flight plans go in TODO. Give the file a size budget and defend it.</p></aside>
 </section>
 
+<!-- ===================================================
+     13b — ONE HONEST PARAGRAPH (the line to steal)
+     =================================================== -->
+<section class="slide" data-swarm="off" data-beat="CLAUDE.md">
+  <div class="corner tl"><span class="wc-mark"></span><span>CLAUDE.md</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">If you write one line tonight, write this one</div>
+    <h2 class="display h2 reveal">Start with <span class="ghost">one honest paragraph.</span></h2>
+    <div class="file reveal" style="columns: 1; font-size: clamp(0.8rem, 1.35vw, 1.4rem); max-height: none;">
+      <div class="path">~/.claude/CLAUDE.md</div>
+      <p>I'm <b>not a professional developer</b> &mdash; I'm learning all of this as I go.
+      <b>Teach me what we're building and why, while we're building it.</b>
+      Explain things without technical jargon I don't understand.
+      <b>Let me make the high-level product decisions</b>; you make the low-level technical ones for me,
+      and tell me what you chose along the way.</p>
+    </div>
+    <p class="punch reveal">No syntax. No config. <em>It's just prose</em> &mdash; and it changes every answer you get, in every project, for the rest of the year.</p>
+  </div>
+  <aside class="notes"><p>The one slide in this beat people can act on before dinner. Read the paragraph out loud, slowly &mdash; half the room recognises themselves in the first six words.</p><p>Point out what it is doing: it sets the agent's <em>register</em> (teach, don't just deliver), its <em>vocabulary</em> (no unexplained jargon), and the <em>division of labour</em> (you own the product decisions, it owns the technical ones). None of that is a setting anywhere in the product &mdash; it's a sentence you wrote.</p><p>Then the habit: everything else in your CLAUDE.md arrives the same way &mdash; you notice something that annoyed you, you write it down, you never say it again.</p></aside>
+</section>
 
 <!-- ===================================================
      7b — docs/*.md
@@ -1332,6 +1452,18 @@ body.clock-on .clock { display: block; }
   <aside class="notes"><p>The economy of docs: fifty exist, a session reads one or two. The map in CLAUDE.md decides which. Never a retelling of the code: when doc and code disagree, the doc is wrong. This is the pattern behind the whole repo, and it's also why 23% of everything I wrote is Markdown.</p></aside>
 </section>
 
+<!-- ===================================================
+     15c — YOUR TEAM HAS AMNESIA (where the metaphor breaks)
+     =================================================== -->
+<section class="slide vision" data-swarm="calm" data-beat="Context engineering">
+  <div class="corner tl"><span class="wc-mark"></span><span>Context engineering</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">Where the metaphor breaks</div>
+    <h2 class="display big reveal">Your team<br><span class="red">has amnesia.</span></h2>
+    <p class="sub reveal" style="max-width: 48ch;">A colleague remembers Tuesday. This one's entire world is the scrollback. Anything you didn't write into a file was said to someone who has already left.</p>
+  </div>
+  <aside class="notes"><p>The callback to "it only knows what is in the window", and the reason CLAUDE.md and docs/ exist at all. One breath, then the loop.</p></aside>
+</section>
 
 <!-- ===================================================
      14 — DOCS ARE THE AGENT'S WORKING MEMORY
@@ -1340,8 +1472,11 @@ body.clock-on .clock { display: block; }
   <div class="corner tl"><span class="wc-mark"></span><span>Context engineering</span></div>
   <div class="slide-content">
     <div class="kicker reveal">The pattern behind the Community Brain repo</div>
-    <h2 class="display h2 reveal">Docs are the agent's<br><span class="ghost">working memory.</span></h2>
-    <div class="flow three reveal">
+    <h2 class="display h2 reveal">Docs are the agent's <span class="ghost">working memory.</span></h2>
+    <figure class="workshop-art reveal" data-art="docs-lifecycle">
+      <img alt="Plans begin in docs/TODO/. As work ships, durable knowledge goes into docs/reference/; the spent plan moves into the write-only docs/finished/ archive. Current reference docs remain available for future sessions." decoding="async">
+    </figure>
+    <div class="flow three reveal art-fallback">
       <div class="step">
         <div class="num">1</div>
         <div class="lbl"><code style="font-family: inherit; background: none; padding: 0; font-size: 1em;">docs/TODO/</code></div>
@@ -1361,11 +1496,10 @@ body.clock-on .clock { display: block; }
         <div class="desc">Write-only archive. Retired plans move in, nothing reads from it.</div>
       </div>
     </div>
-    <p class="sub reveal" style="max-width: 70ch;">Work flows one way. <strong>Docs follow code, never lead it.</strong> The doc pass is part of the task.</p>
+    <p class="sub art-caption reveal"><strong>Keep the learning. Retire the plan.</strong> Docs follow code, never lead it.</p>
   </div>
   <aside class="notes"><p>If running late, compress this to one sentence: "plans on one side, how-it-works on the other, and docs follow code." Never cut the grill demo to save this slide.</p></aside>
 </section>
-
 
 <!-- ===================================================
      14b — THE DOCS ARE A BRAIN YOU OWN (LLM wiki)
@@ -1383,7 +1517,6 @@ body.clock-on .clock { display: block; }
   </div>
   <aside class="notes"><p>Widen the frame here: the repo docs pattern is one instance of something bigger. Notes that link to each other, written and re-read by an agent, become a knowledge base that compounds &mdash; Karpathy's "LLM wiki". Mine holds a project's architecture; the same folder could hold your customers, your reading, your goals.</p><p>Say the ownership line: it is plain text, on your disk, readable by any model, this year and in five years. That is the opposite of a chat history locked in someone's product.</p></aside>
 </section>
-
 
 <!-- ===================================================
      7c — SKILLS
@@ -1414,6 +1547,36 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>Two halves of one file: the description is the always-visible hook, the body is the payload. Beginners write skills for the tasks they repeat: "how I like a feature added", "how to write a status update". Rung 3 of the build.</p></aside>
 </section>
 
+<!-- ===================================================
+     21b — SKILLS ARE NOT STICKERS
+     =================================================== -->
+<section class="slide visual-slide" id="skills-gym" data-swarm="off" data-beat="Context engineering">
+  <div class="corner tl"><span class="wc-mark"></span><span>Context engineering</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">The instinct after a talk like this: go and install twenty things</div>
+    <h2 class="display h2 reveal">Skills are not stickers. <span class="ghost">Install the pain, not the list.</span></h2>
+    <div class="art-editorial">
+    <figure class="workshop-art reveal" data-art="skills-gym">
+      <img alt="A boastful bodybuilder shows off an absurd collection of skills while their instruction weight overloads his context window and buries the actual task." decoding="async">
+    </figure>
+      <div class="art-takeaways reveal">
+        <div><b>Answers too wordy?</b><p>Three lines in your CLAUDE.md.</p></div>
+        <div><b>Building before thinking?</b><p>Trigger the grilling skill.</p></div>
+        <div><b>Repeating the same chore?</b><p>Write one skill for that task.</p></div>
+        <p class="sub">Descriptions add overhead. Bodies load on trigger. <strong>Load what solves today's problem.</strong></p>
+      </div>
+    </div>
+    <div class="pain reveal art-fallback">
+      <div class="row" style="--c: var(--red)"><div class="hurt">Every answer opens with three paragraphs of throat-clearing</div><div class="arw">&rarr;</div><div class="fix">Three lines in your <b>CLAUDE.md</b><small>Not a download.</small></div></div>
+      <div class="row" style="--c: var(--magenta)"><div class="hurt">Your draft reads like a press release</div><div class="arw">&rarr;</div><div class="fix">A <b>humanizer</b> skill<small>Fires before you publish.</small></div></div>
+      <div class="row" style="--c: var(--blue)"><div class="hurt">It starts building before you've finished thinking</div><div class="arw">&rarr;</div><div class="fix"><b>grilling</b><small>In the pack. Twenty lines of English.</small></div></div>
+      <div class="row" style="--c: var(--magenta)"><div class="hurt">The page works, but it feels cheap and generic</div><div class="arw">&rarr;</div><div class="fix">An <b>interface-polish</b> pass<small>Fires after it's built.</small></div></div>
+      <div class="row" style="--c: var(--blue)"><div class="hurt">You explain your stack again in every new session</div><div class="arw">&rarr;</div><div class="fix"><b>CLAUDE.md</b> first, memory tooling after<small>Most "it forgot" is a missing map.</small></div></div>
+      <div class="row" style="--c: var(--green)"><div class="hurt">You've typed the same three-step chore twice</div><div class="arw">&rarr;</div><div class="fix"><b>Write your own.</b><small>The one skill nobody else can give you.</small></div></div>
+    </div>
+  </div>
+  <aside class="notes"><p>There's a post doing 600K views right now: "the 19 skills I'd install on a fresh setup", a star count next to every entry. The repos are real &mdash; I checked &mdash; and two or three are genuinely good. What's wrong is the causality: capability does not arrive by installing things. Everything in the last forty minutes said the leverage is in the context.</p><p>The two named ones are real and worth having: <em>blader/humanizer</em> (~45K stars, rewrite, hunt the tells, rewrite) and <em>make-interfaces-feel-better</em> (~3K: spacing, hover states, hit areas, motion) &mdash; note that both fire at a <em>moment</em>, and neither encodes anybody's personal taste. The second one is usable this afternoon on whatever they built at rung 3. Point at how often the right-hand column is a paragraph you write instead. Land it on the last row, then say the shape test out loud in one breath: anything you install is instructions a stranger puts in your context window &mdash; read it with the same care as <code>curl | sh</code>, and write one before you install five. First slide to drop if the clock is tight &mdash; it survives in the pack.</p></aside>
+</section>
 
 <!-- ===================================================
      7d — TOOLS
@@ -1448,7 +1611,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>Tie back to the harness slides: this schema is literally the "setup" text. Then the cost argument: a tool you never use still costs tokens every session, so tool design is context design &mdash; and the sentence is the interface: vague sentence, wrong tool or never called. The brain's agents get ~15, and never a shell.</p></aside>
 </section>
 
-
 <!-- ===================================================
      7e — MCP SERVERS
      =================================================== -->
@@ -1457,7 +1619,11 @@ Do not act until the frontier is empty.</div>
   <div class="slide-content">
     <div class="kicker reveal">Mechanism 5 &middot; the standard plug</div>
     <h2 class="display h2 reveal">MCP servers <span class="ghost">&mdash; publish once, plug in anywhere.</span></h2>
-    <div class="mech reveal" style="--c: var(--magenta)">
+    <figure class="workshop-art reveal" data-art="mcp-plug">
+      <img alt="MCP is a shared connection standard: the same kind of plug connects an agent to browser, CRM and community tools." decoding="async">
+    </figure>
+    <p class="sub art-caption art-summary reveal"><strong>One standard plug.</strong> Each server exposes tools and instructions to an MCP-compatible agent. <a class="lnk" href="https://mcpservers.org/" target="_blank" rel="noopener">Explore servers&nbsp;&nearr;</a></p>
+    <div class="mech reveal art-fallback" style="--c: var(--magenta)">
       <div>
         <div class="plug">
           <div class="agent"><div class="one">any agent</div><div class="lbl">Your<br>agent</div><div class="one" style="color: var(--cream-faint)">speaks MCP</div></div>
@@ -1479,7 +1645,6 @@ Do not act until the frontier is empty.</div>
   </div>
   <aside class="notes"><p>The word most people in the room have heard and can't place. It's a plug standard: tools plus instructions, exposed once, usable by any agent. Show the Claude in Chrome connection live if there's time; that's exactly what everyone does in rung 4, picking a server off mcpservers.org.</p></aside>
 </section>
-
 
 <!-- ===================================================
      7f — MEMORY
@@ -1519,7 +1684,6 @@ Do not act until the frontier is empty.</div>
   </div>
   <aside class="notes"><p><b>Deliberately shallow &mdash; do not go down this hole.</b> Say only: memory is anything written now and read back later, it comes in <em>on recall</em>, and building a good one is an entire workshop of its own. One sentence on the brain: a thousand people's conversations into one store, recalled per question, privacy enforced in code. Then close the six with <b>the right context, at the right moment, and nothing else</b>.</p></aside>
 </section>
-
 
 <!-- ===================================================
      9 — PROGRESSIVE DISCLOSURE (what's actually in the window)
@@ -1577,35 +1741,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>Five steps on this slide (&rarr; or a tap), then the deck moves on. Step 0: the instinct everyone has, "just give it everything". Step 1: what a session actually starts with, the map and one-line hooks. Step 2: ten minutes later, nothing loaded yet. Step 3: "grill" matched a description, the skill body loads. Step 4: the map named one doc, it loads, still lots of room. Step 5: the corollary. Tap any block to show what is actually inside it. Token numbers are illustrative, order of magnitude right.</p><p>Rule 2, stale context, gets its full failure story later; one line here is enough.</p></aside>
 </section>
 
-
-<!-- ===================================================
-     11 — IT'S JUST PROSE (demo cue, quiet)
-     =================================================== -->
-<section class="slide" data-swarm="off" data-beat="CLAUDE.md">
-  <div class="corner tl"><span class="wc-mark"></span><span>CLAUDE.md</span></div>
-  <div class="slide-content">
-    <div class="kicker reveal">My real global file, trimmed &middot; <code style="letter-spacing: 0; text-transform: none; font-size: 1.05em;">~/.claude/CLAUDE.md</code></div>
-    <h2 class="display h2 reveal">It's just prose.</h2>
-    <div class="file reveal">
-      <h4>Communicating with me</h4>
-      <p>My time is my most valuable asset. At every human touchpoint, <b>every token must earn its place</b>:</p>
-      <ul>
-        <li><b>Concise and clear over exhaustive.</b> One representative example, not a narration of everything you did.</li>
-        <li><b>Never use a bare pointer as if I remember it.</b> Restate what it is inline, the first time.</li>
-      </ul>
-      <h4>Python tooling</h4>
-      <p>I use <b>uv</b> for everything. Lint with <b>ruff</b>, never pyflakes.</p>
-      <h4>Repo docs are the agent's working memory</h4>
-      <p><b>docs/TODO/</b> (plans) &rarr; <b>docs/reference/</b> (how things work now, and why) &rarr; <b>docs/finished/</b> (archive). A reference doc is <b>a map, not a mirror</b>.</p>
-      <p><b>Reference docs follow code, never lead it.</b> When they disagree, fix the doc.</p>
-      <h4>Before declaring a task done</h4>
-      <p>Docs invalidated by the change are updated. Finished plans are moved, not deleted.</p>
-    </div>
-  </div>
-  <aside class="notes"><p>Show, don't tell: scroll the real file on screen. No syntax, no config &mdash; that's the whole point. Optional 20-second aside: "I even have a life_goals.md the agent reads, so it knows what everything nests under." Context engineering isn't a coding thing: anything you'd explain to a new colleague on day one belongs in a file.</p></aside>
-</section>
-
-
 <!-- ===================================================
      15 — 80% OF MY TOKENS ARE ENGLISH
      =================================================== -->
@@ -1627,49 +1762,6 @@ Do not act until the frontier is empty.</div>
   </div>
   <aside class="notes"><p>Most valuable beat for beginners and the part most talks skip. Open with the number. The corollary for the room: if you can write a clear paragraph, you can build software.</p></aside>
 </section>
-
-
-<!-- ===================================================
-     15c — YOUR TEAM HAS AMNESIA (where the metaphor breaks)
-     =================================================== -->
-<section class="slide vision" data-swarm="calm" data-beat="Writing English">
-  <div class="corner tl"><span class="wc-mark"></span><span>The workflow</span></div>
-  <div class="slide-content">
-    <div class="kicker reveal">Where the metaphor breaks</div>
-    <h2 class="display big reveal">Your team<br><span class="red">has amnesia.</span></h2>
-    <p class="sub reveal" style="max-width: 48ch;">A colleague remembers Tuesday. This one's entire world is the scrollback. Anything you didn't write into a file was said to someone who has already left.</p>
-  </div>
-  <aside class="notes"><p>The callback to "it only knows what is in the window", and the reason CLAUDE.md and docs/ exist at all. One breath, then the loop.</p></aside>
-</section>
-
-
-<!-- ===================================================
-     16a — THINK IN SPRINTS, NOT TWEAKS
-     =================================================== -->
-<section class="slide" data-swarm="off" data-beat="Writing English">
-  <div class="corner tl"><span class="wc-mark"></span><span>The workflow</span></div>
-  <div class="slide-content">
-    <div class="kicker reveal">The unit of work is not the edit</div>
-    <h2 class="display h2 reveal">Think in sprints, <span class="ghost">not tweaks.</span></h2>
-    <div class="caps two reveal">
-      <div class="cap" style="--c: var(--red); min-height: auto;">
-        <div class="one">A tab per tweak</div>
-        <div class="lbl">What everyone does first</div>
-        <div class="say"><em>"Make this button red, bump the font a bit, centre the text."</em></div>
-        <div class="rule">Every session starts from zero and leaves nothing behind. You are the only place the plan lives.</div>
-      </div>
-      <div class="cap" style="--c: var(--green); min-height: auto;">
-        <div class="one">A sprint</div>
-        <div class="lbl">One dedicated push</div>
-        <div class="say"><em>"Read the brand template, then polish the entire site to that spec. Professional and clean, and don't forget the phone view."</em></div>
-        <div class="rule">One pass over everything that touches the same part of the stack. Bigger scope, better result, and it ends in a doc.</div>
-      </div>
-    </div>
-    <p class="punch reveal">New idea? <em>Don't open a tab.</em> Explain it to the agent, have it folded into the sprint doc &mdash; then point a coding agent at the doc.</p>
-  </div>
-  <aside class="notes"><p>This is the habit that separates people who get value from Claude Code from people who get frustrated by it. Beginners treat the agent like a text editor with a chat box: one tiny prompt, one tiny edit, repeat. Every one of those sessions is a cold start.</p><p>A sprint is a single dedicated push that bundles the changes touching the same part of the stack &mdash; the whole visual pass, the whole auth flow, the whole mobile view. Bigger asks get better answers, because the agent can see how the pieces relate instead of nudging one pixel blind.</p><p>Land the workflow: ideas arrive all day; they go into the sprint doc, not into a new tab. Then you point coding agents at that doc &mdash; which is the loop on the next slide, and the three prompts right after it.</p></aside>
-</section>
-
 
 <!-- ===================================================
      16 — THE LOOP: ANALYZE & PROPOSE → IMPROVE → IMPLEMENT → REVIEW
@@ -1716,6 +1808,32 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>Then it cycles. The review feeds the next proposal. Point out that steps 1, 2 and 4 produce zero code &mdash; that's where 80% of the tokens go.</p></aside>
 </section>
 
+<!-- ===================================================
+     16a — THINK IN SPRINTS, NOT TWEAKS
+     =================================================== -->
+<section class="slide" data-swarm="off" data-beat="Writing English">
+  <div class="corner tl"><span class="wc-mark"></span><span>The workflow</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">The unit of work is not the edit</div>
+    <h2 class="display h2 reveal">Think in sprints, <span class="ghost">not tweaks.</span></h2>
+    <div class="caps two reveal">
+      <div class="cap" style="--c: var(--red); min-height: auto;">
+        <div class="one">A tab per tweak</div>
+        <div class="lbl">What everyone does first</div>
+        <div class="say"><em>"Make this button red, bump the font a bit, centre the text."</em></div>
+        <div class="rule">Every session starts from zero and leaves nothing behind. You are the only place the plan lives.</div>
+      </div>
+      <div class="cap" style="--c: var(--green); min-height: auto;">
+        <div class="one">A sprint</div>
+        <div class="lbl">One dedicated push</div>
+        <div class="say"><em>"Read the brand template, then polish the entire site to that spec. Professional and clean, and don't forget the phone view."</em></div>
+        <div class="rule">One pass over everything that touches the same part of the stack. Bigger scope, better result, and it ends in a doc.</div>
+      </div>
+    </div>
+    <p class="punch reveal">New idea? <em>Don't open a tab.</em> Explain it to the agent, have it folded into the sprint doc &mdash; then point a coding agent at the doc.</p>
+  </div>
+  <aside class="notes"><p>This is the habit that separates people who get value from Claude Code from people who get frustrated by it. Beginners treat the agent like a text editor with a chat box: one tiny prompt, one tiny edit, repeat. Every one of those sessions is a cold start.</p><p>A sprint is a single dedicated push that bundles the changes touching the same part of the stack &mdash; the whole visual pass, the whole auth flow, the whole mobile view. Bigger asks get better answers, because the agent can see how the pieces relate instead of nudging one pixel blind.</p><p>Land the workflow: ideas arrive all day; they go into the sprint doc, not into a new tab. Then you point coding agents at that doc &mdash; which is the loop on the next slide, and the three prompts right after it.</p></aside>
+</section>
 
 <!-- ===================================================
      16b — TWO PROMPTS, SAME FILE (click to copy)
@@ -1747,7 +1865,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>The concrete pay-off of the loop slide: three literal prompts carry most of my week. Say the asymmetry out loud &mdash; prompt 01 is typed ten times per feature, prompt 02 once. Beginners assume the skill is in prompt 02; it is entirely in 01. The plan file is the artefact they'll write in rung 5.</p><p>Prompt 03 is the one nobody does, and it is the difference between four months of compounding and four months of starting over. Callback to "your team has amnesia": the session's learning only exists if it lands in a file. Also say the honest number &mdash; it used to be 80% for the first two; the third is what the docs workflow costs, and it pays for itself the next morning.</p></aside>
 </section>
 
-
 <!-- ===================================================
      16c — SWITCHING MODELS (main driver + a second opinion)
      =================================================== -->
@@ -1775,7 +1892,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>Say the honest version: 90% of everything is Opus 5 on high effort, and I do not model-shop mid-task. The cross-model review is reserved for the sprint doc that a whole week of work hangs off &mdash; a fresh model catches the thing my usual one and I have both stopped seeing.</p><p>The portability point is the real lesson for the room: because the plan lives in a plain text file and not inside one chat window, swapping models is a copy-paste, not a migration.</p></aside>
 </section>
 
-
 <!-- ===================================================
      16d — WHICH REASONING LEVEL (the vals.ai chart)
      =================================================== -->
@@ -1792,7 +1908,6 @@ Do not act until the frontier is empty.</div>
   </div>
   <aside class="notes"><p>Don't read the chart out. One finger, one sentence: quality climbs steeply to <b>high</b>, then flattens while cost keeps climbing. That is why my default is Opus 5 on high and why I don't reflexively crank it to max.</p><p>The transferable habit: effort is a dial you set per task, not a setting you forget. Cheap dial down for boilerplate, high for anything you'd have to debug later.</p></aside>
 </section>
-
 
 <!-- ===================================================
      17 — GRILL ME (demo cue, quiet)
@@ -1828,7 +1943,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>Demo cue: type "grill me on the workshop rung-3 artefact", show one round. Most people have never had a tool push back on their thinking; this is the moment they get it. <b>Never cut this demo</b> if running late.</p></aside>
 </section>
 
-
 <!-- ===================================================
      20 — TESTS, TESTS, TESTS
      =================================================== -->
@@ -1863,7 +1977,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>Untested agent output is a guess; tested agent output is a fact. This is the beginner-safe substitute for reading every diff &mdash; you review the tests, not the implementation. Ask <em>"how do you know?"</em>: the answer should be a test. Say out loud that a test suite is the only thing that survives the amnesia between sessions.</p></aside>
 </section>
 
-
 <!-- ===================================================
      20b3 — GITHUB 101 (pointer to the optional side-session)
      =================================================== -->
@@ -1872,17 +1985,20 @@ Do not act until the frontier is empty.</div>
   <div class="slide-content">
     <div class="kicker reveal">The one piece of plumbing worth learning on purpose</div>
     <h2 class="display h2 reveal">Git is the undo button <span class="ghost">for everything you build.</span></h2>
-    <div class="menu reveal">
+    <figure class="workshop-art reveal" data-art="git-savepoints">
+      <img alt="Git commits preserve project snapshots locally, so you can experiment and return to a saved version. GitHub holds a shared remote copy when you push." decoding="async">
+    </figure>
+    <p class="sub art-caption art-summary reveal"><strong>Commit a save point. Inspect the diff. Recover if needed.</strong> Push to GitHub for a shared copy.<br>Optional during the build: <strong>GitHub 101</strong> &mdash; branches, pull requests, and finding your way back.</p>
+    <div class="menu reveal art-fallback">
       <div class="item" style="--c: var(--red)"><div class="use"><b>A save point for the whole project</b> &mdash; every version kept, nothing silently overwritten</div><div class="mech">git &middot; local</div></div>
       <div class="item" style="--c: var(--magenta)"><div class="use"><b>How you see what the agent did</b> &mdash; twelve files edited in a minute; the diff is the receipt, the commit is the way back</div><div class="mech">Why it matters now</div></div>
       <div class="item" style="--c: var(--blue)"><div class="use"><b>GitHub is that, in the cloud</b> &mdash; backup, sharing, and what your host deploys from</div><div class="mech">github.com &middot; free</div></div>
     </div>
-    <p class="punch reveal">You need about five commands &mdash; and <em>the agent runs them for you.</em> Commit before you let it loose, and a bad hour costs you nothing.</p>
-    <p class="sub reveal" style="max-width: 82ch;"><strong>Optional side-session during the build:</strong> a full <strong>GitHub 101</strong> &mdash; branches, pull requests, what to do when it goes wrong. Show of hands.</p>
+    <p class="punch reveal art-fallback">You need about five commands &mdash; and <em>the agent runs them for you.</em> Commit before you let it loose, and a bad hour costs you nothing.</p>
+    <p class="sub reveal art-fallback" style="max-width: 82ch;"><strong>Optional side-session during the build:</strong> a full <strong>GitHub 101</strong> &mdash; branches, pull requests, what to do when it goes wrong. Show of hands.</p>
   </div>
   <aside class="notes"><p>A pointer slide, not a tutorial &mdash; 60 seconds, then the show of hands. Do not start teaching git here; that is exactly what the side-session is for.</p><p>The one line that lands with beginners: an agent can change a dozen files before you've finished reading its first sentence. Without version control that is scary and you'll rein it in; with it, "git commit" before a big prompt means the worst case is throwing away an hour. That is what makes it safe to let it run &mdash; same argument as the tests slide.</p><p>Practical: they never have to memorise commands, they can say "commit this with a sensible message" or "show me what you changed since my last commit". If nobody raises a hand, skip it and offer it one-to-one on the floor.</p></aside>
 </section>
-
 
 <!-- ===================================================
      20a — TWO WEEKS IS A DAY (recalibrating scope)
@@ -1911,7 +2027,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>A small slide that changes what people attempt. Ask Claude how long something will take and it answers like a tech lead scoping a team sprint, because that is what its training data contains. In practice a "two-week" feature is usually an afternoon of deciding and twenty minutes of generation.</p><p>Two honest caveats so this isn't hype: the day is real work &mdash; the thinking, the review, the going-live list from the next section &mdash; and the 10&times; only holds when the spec is good, which is the whole point of the last five slides. The failure mode isn't over-ambition, it's under-ambition: people build the small version of their idea because they're still pricing it in 2023 hours.</p></aside>
 </section>
 
-
 <!-- ===================================================
      20b — DEPLOY: A PRODUCT IS MORE PIECES THAN THE CODE
      =================================================== -->
@@ -1936,7 +2051,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>The beat that stops "it works on my laptop" from being the end of the story. A product is the same code plus everything that lets a stranger open a URL and use it &mdash; and this list is exactly what makes beginners feel "I'm not a dev". Show it once, not deep: one line per box, examples not recommendations.</p><p>Callback to slide 3: that stack table was this list, filled in once &mdash; Vercel, Modal, Neon, Clerk. The boring choice (managed, free tier, popular) is the right first choice: you're buying "someone else runs it" so you can keep building. If the clock is tight, say this slide in one sentence over the next one.</p></aside>
 </section>
 
-
 <!-- ===================================================
      20b2 — DEPLOY: THE THREE NAMES YOU KEEP HEARING (Vercel / a database / a cloud)
      =================================================== -->
@@ -1945,7 +2059,11 @@ Do not act until the frontier is empty.</div>
   <div class="slide-content">
     <div class="kicker reveal">The three names on that list you'll actually meet in week one</div>
     <h2 class="display h2 reveal">Vercel, a database, a cloud. <span class="ghost">What they are.</span></h2>
-    <div class="caps reveal">
+    <figure class="workshop-art reveal" data-art="product-pieces">
+      <img alt="Three common parts of a web product: the front is the page people use, memory stores persistent data, and a worker runs the application logic." decoding="async">
+    </figure>
+    <p class="sub art-caption art-summary reveal"><strong>Vercel serves the pages. A database keeps the data. Cloud compute runs the work.</strong><br>Start with the pieces your app actually needs.</p>
+    <div class="caps reveal art-fallback">
       <div class="cap" style="--c: var(--red);">
         <div class="one">The pages &middot; the front</div>
         <div class="lbl">Vercel</div>
@@ -1965,11 +2083,10 @@ Do not act until the frontier is empty.</div>
         <div class="eg"><b>Reach for it when</b> the work is too heavy, too slow or too scheduled for a browser tab.</div>
       </div>
     </div>
-    <p class="punch reveal">A front, a memory, a worker. <em>Nearly every product you've ever used is those three and some glue.</em></p>
+    <p class="punch reveal art-fallback">A front, a memory, a worker. <em>Nearly every product you've ever used is those three and some glue.</em></p>
   </div>
   <aside class="notes"><p>Pure orientation, 60&ndash;90 seconds. Half the room has heard these words and has no idea which is which; the goal is only that they know where to start looking, not how any of it works. One sentence per box, then move.</p><p>The through-line: front, memory, worker. Vercel = the pages, and the deploy is "git push". A database = the only thing that survives a reload &mdash; and say the beginner-freeing part out loud: until you have users, a JSON file on disk is a perfectly good database. A cloud = where the code runs when the laptop is shut; Modal is the friendliest on-ramp for Python people (decorator, scale to zero, GPUs), AWS/GCP are the industrial version and not where a beginner should start on day one.</p><p>If the clock is tight, this is the slide to say in one sentence: "front, memory, worker &mdash; and the next slide is how you learn any of them."</p></aside>
 </section>
-
 
 <!-- ===================================================
      20c — DEPLOY: FOR EVERYTHING YOU DON'T KNOW, ASK (click to copy)
@@ -1996,7 +2113,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>The point of the section. The agent knows every one of those providers better than any tutorial, and the loop from the workflow beat applies unchanged: no-code proposal first (which pieces, simplest option each, why, what it costs), then one step at a time, then "how do you know it's live?" &mdash; the failure story about the secret that never shipped is exactly the check.</p><p>Prompt 02 is for any word on the previous slide they didn't recognise. Both are in the pack.</p></aside>
 </section>
 
-
 <!-- ===================================================
      21 — WHAT PEOPLE ACTUALLY DO WITH IT
      =================================================== -->
@@ -2004,7 +2120,7 @@ Do not act until the frontier is empty.</div>
   <div class="corner tl"><span class="wc-mark"></span><span>Use cases</span></div>
   <div class="slide-content">
     <div class="kicker reveal">Not all code &mdash; half of you won't write software next week</div>
-    <h2 class="display h2 reveal">What people actually do with it.</h2>
+    <h2 class="display h2 reveal">So, what can you actually build?</h2>
     <div class="menu reveal">
       <div class="item" style="--c: var(--red)"><div class="use">Learn any codebase in an hour &mdash; a guided, file-by-file tour</div><div class="mech">Claude Code</div></div>
       <div class="item" style="--c: var(--red)"><div class="use">Build a small CLI tool from a plain-English description</div><div class="mech">Claude Code</div></div>
@@ -2019,39 +2135,6 @@ Do not act until the frontier is empty.</div>
   </div>
   <aside class="notes"><p>One line each, with the mechanism so it ties back to the six-ways slide. People who finish the ladder early pick anything from here.</p></aside>
 </section>
-
-
-<!-- ===================================================
-     21b — SKILLS ARE NOT STICKERS
-     =================================================== -->
-<section class="slide visual-slide" id="skills-gym" data-swarm="off" data-beat="Use cases">
-  <div class="corner tl"><span class="wc-mark"></span><span>Use cases</span></div>
-  <div class="slide-content">
-    <div class="kicker reveal">The instinct after a talk like this: go and install twenty things</div>
-    <h2 class="display h2 reveal">Skills are not stickers. <span class="ghost">Install the pain, not the list.</span></h2>
-    <div class="art-editorial">
-    <figure class="workshop-art reveal" data-art="skills-gym">
-      <img alt="A boastful bodybuilder shows off an absurd collection of skills while their instruction weight overloads his context window and buries the actual task." decoding="async">
-    </figure>
-      <div class="art-takeaways reveal">
-        <div><b>Answers too wordy?</b><p>Three lines in your CLAUDE.md.</p></div>
-        <div><b>Building before thinking?</b><p>Trigger the grilling skill.</p></div>
-        <div><b>Repeating the same chore?</b><p>Write one skill for that task.</p></div>
-        <p class="sub">Descriptions add overhead. Bodies load on trigger. <strong>Load what solves today's problem.</strong></p>
-      </div>
-    </div>
-    <div class="pain reveal art-fallback">
-      <div class="row" style="--c: var(--red)"><div class="hurt">Every answer opens with three paragraphs of throat-clearing</div><div class="arw">&rarr;</div><div class="fix">Three lines in your <b>CLAUDE.md</b><small>Not a download.</small></div></div>
-      <div class="row" style="--c: var(--magenta)"><div class="hurt">Your draft reads like a press release</div><div class="arw">&rarr;</div><div class="fix">A <b>humanizer</b> skill<small>Fires before you publish.</small></div></div>
-      <div class="row" style="--c: var(--blue)"><div class="hurt">It starts building before you've finished thinking</div><div class="arw">&rarr;</div><div class="fix"><b>grilling</b><small>In the pack. Twenty lines of English.</small></div></div>
-      <div class="row" style="--c: var(--magenta)"><div class="hurt">The page works, but it feels cheap and generic</div><div class="arw">&rarr;</div><div class="fix">An <b>interface-polish</b> pass<small>Fires after it's built.</small></div></div>
-      <div class="row" style="--c: var(--blue)"><div class="hurt">You explain your stack again in every new session</div><div class="arw">&rarr;</div><div class="fix"><b>CLAUDE.md</b> first, memory tooling after<small>Most "it forgot" is a missing map.</small></div></div>
-      <div class="row" style="--c: var(--green)"><div class="hurt">You've typed the same three-step chore twice</div><div class="arw">&rarr;</div><div class="fix"><b>Write your own.</b><small>The one skill nobody else can give you.</small></div></div>
-    </div>
-  </div>
-  <aside class="notes"><p>There's a post doing 600K views right now: "the 19 skills I'd install on a fresh setup", a star count next to every entry. The repos are real &mdash; I checked &mdash; and two or three are genuinely good. What's wrong is the causality: capability does not arrive by installing things. Everything in the last forty minutes said the leverage is in the context.</p><p>The two named ones are real and worth having: <em>blader/humanizer</em> (~45K stars, rewrite, hunt the tells, rewrite) and <em>make-interfaces-feel-better</em> (~3K: spacing, hover states, hit areas, motion) &mdash; note that both fire at a <em>moment</em>, and neither encodes anybody's personal taste. The second one is usable this afternoon on whatever they built at rung 3. Point at how often the right-hand column is a paragraph you write instead. Land it on the last row, then say the shape test out loud in one breath: anything you install is instructions a stranger puts in your context window &mdash; read it with the same care as <code>curl | sh</code>, and write one before you install five. First slide to drop if the clock is tight &mdash; it survives in the pack.</p></aside>
-</section>
-
 
 <!-- ===================================================
      20c2 — THE HONEST SLIDE: NOT EVERYONE NEEDS TO BECOME A DEVELOPER
@@ -2080,7 +2163,6 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>The honesty beat, and it buys credibility for everything else in the hour. Say the exciting half first and mean it: the escape hatch is real, this is why the room is buzzing. Then the turn &mdash; everyone in every room like this one got the same superpower in the same month, so the supply of "there's an app for that" exploded while the amount of attention on the other side did not.</p><p>The split is the useful part, and it is not a warning against building &mdash; it is a warning against skipping validation. Internal tools: the bar is only "does this help me on Monday", so build it this weekend, no permission needed. Public product: the code was never the hard part, and now it's the cheap part; the scarce thing moved to distribution and to someone actually wanting it. Ten conversations before ten thousand lines.</p><p>Room-aware: most of this audience is in the internal-tool bucket &mdash; give them the green light explicitly so nobody leaves thinking "so I shouldn't build".</p></aside>
 </section>
 
-
 <!-- ===================================================
      20d — THE LESSON: A WILLINGNESS TO LEARN
      =================================================== -->
@@ -2095,6 +2177,33 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>The emotional peak of the talk; give it a breath. Slowly: when you start building something you will have gaps everywhere, and the sentence that follows is "I'm not a dev". The core insight of the last hour is that AI can help you understand <b>and</b> do every one of those things. What it asks of you is not knowledge. It's patience, and a gigantic willingness to learn as you go.</p><p>Last line, then silence: if your will is strong, you can build anything. Never cut this slide.</p></aside>
 </section>
 
+<!-- ===================================================
+     21b — THE MONTHLY MEETUP: AGENTIC BUILDING
+     =================================================== -->
+<section class="slide" data-swarm="flock" data-beat="Closing">
+  <div class="corner tl"><span class="wc-mark"></span><span>What's next</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">This doesn't end at 16:00</div>
+    <h2 class="display h2 reveal">Agentic Building. <span class="ghost">Monthly, here.</span></h2>
+    <p class="quote reveal" style="max-width: 46ch; margin-top: clamp(0.6rem, 2vh, 1.4rem);">All of this is mostly <em>vibes</em>, not exact science. Everyone is figuring it out as they build &mdash; and sometimes fail &mdash; forward.</p>
+    <div class="caps reveal" style="margin-top: clamp(0.8rem, 2vh, 1.6rem);">
+      <div class="cap" style="--c: var(--red); min-height: auto;">
+        <div class="one">Why a meetup</div>
+        <div class="say">There is no manual. The good tricks live in people's heads for about a month before anyone writes them down. Inside a builders' community that gap is the <em>highest-leverage thing</em> you can close.</div>
+      </div>
+      <div class="cap" style="--c: var(--magenta); min-height: auto;">
+        <div class="one">What happens</div>
+        <div class="say">Short demos of what you actually shipped this month &mdash; <b>what worked, what broke, what you'd never do again</b>. Then we build. Live failure is the most useful slot of the night.</div>
+      </div>
+      <div class="cap" style="--c: var(--green); min-height: auto;">
+        <div class="one">When</div>
+        <div class="say">Every month at Wintercircus. First edition likely <b>early October</b> &mdash; dates announced soon. Come with something half-broken; that's the point.</div>
+      </div>
+    </div>
+    <p class="punch reveal">Nobody here is an expert. <em>We're just a month ahead of each other &mdash; and that's worth showing up for.</em></p>
+  </div>
+  <aside class="notes"><p>The hand-off beat: today was a one-off, this is the thing that makes it stick. Say it plainly &mdash; none of this is settled craft. It's vibes, taste, and a lot of failing forward, which is exactly why it's worth doing in a room rather than alone at a laptop.</p><p>Make the ask concrete: the first edition is likely early October, dates land soon, and the way to get them is to be reachable &mdash; talk to the Community Brain, or grab me during the build. Invite one person in the room to commit out loud to demoing something at the first edition; a named volunteer on stage is worth more than the slide.</p><p>Keep it under 90 seconds &mdash; the room's laptops are already half open. Then straight into the six rungs.</p></aside>
+</section>
 
 <!-- ===================================================
      22 — SIX RUNGS
@@ -2102,7 +2211,7 @@ Do not act until the frontier is empty.</div>
 <section class="slide" data-swarm="off" data-beat="Bridge">
   <div class="corner tl"><span class="wc-mark"></span><span>Build</span></div>
   <div class="slide-content">
-    <div class="kicker reveal">14:00 – 16:00 · The build · in the next two hours you'll do all of it in miniature</div>
+    <div class="kicker reveal">14:30 – 16:00 · The build · in the next ninety minutes you'll do all of it in miniature</div>
     <h2 class="display h2 reveal">Six rungs. <span class="ghost">Climb as far as you like.</span></h2>
     <div class="ladder reveal">
       <div class="rung" style="--c: var(--cream-dim)"><div class="min">15<small>min</small></div><div class="lbl">1 · Set up Claude&nbsp;(Code)</div><div class="desc">Installed, logged in, first prompt answered. <em>Done when it answers in your terminal.</em></div></div>
@@ -2117,21 +2226,23 @@ Do not act until the frontier is empty.</div>
   <aside class="notes"><p>Common track so nobody stares at a blank screen; racing ahead is allowed; helpers roam. Rung 1, setup, is where beginner workshops die, so it gets a real budget and every helper on the floor. If the talk runs over, cut rung-5 time (the free build), never setup time.</p></aside>
 </section>
 
-
 <!-- ===================================================
      23 — YOU ARE THE IMAGINATION.
      =================================================== -->
-<section class="slide vision" data-swarm="flock" data-beat="Bridge">
+<section class="slide imagination-slide" id="imagination-amplifier" data-swarm="flock" data-beat="Bridge">
   <div class="corner tl"><span class="wc-mark"></span><span>Why this matters</span></div>
   <div class="slide-content">
+    <div class="imagination-copy">
     <div class="kicker reveal">Why this matters</div>
     <h2 class="display big reveal">You are the imagination.<br><span class="red">Claude is the amplifier.</span></h2>
     <p class="sub reveal">The model doesn't know what's worth building. You do. <strong>The spark is the only scarce thing left.</strong></p>
-    <p class="sub reveal" style="margin-top: clamp(0.6rem, 1.6vh, 1.2rem);">Keep going at <strong>Murmura</strong>: the monthly builders' meetup, here.</p>
+    </div>
+    <figure class="workshop-art reveal" data-art="imagination-amplifier">
+      <img alt="A human supplies a small creative spark; an amplifying instrument expands it into a world of shapes and possibilities. You supply the imagination and direction." decoding="async">
+    </figure>
   </div>
-  <aside class="notes"><p>Manifesto beat, kept from the launch deck. The gap between "I have an idea" and "it exists" just collapsed. Mention Murmura as the place to keep going: monthly, here, thunder talks, no organiser &mdash; the brain builds the lineup.</p></aside>
+  <aside class="notes"><p>Manifesto beat, kept from the launch deck. The gap between "I have an idea" and "it exists" just collapsed.</p></aside>
 </section>
-
 
 <!-- ===================================================
      24 — GO BUILD
@@ -2151,7 +2262,6 @@ Do not act until the frontier is empty.</div>
   </div>
   <aside class="notes"><p>Introduce the helpers by name. Then advance to the cheat sheet and leave it on the projector for the whole build.</p></aside>
 </section>
-
 
 <!-- ===================================================
      25 — STARTER PROMPTS (click a prompt to copy it) — stays on screen
@@ -2186,6 +2296,165 @@ Do not act until the frontier is empty.</div>
   </div>
   <aside class="notes"><p>Leave this on the projector for the whole build. Rung 4 default = the browser MCP (strongest "it just did that?" moment, no keys); filesystem MCP as fallback, and mcpservers.org is the menu if someone wants their own. The grilling skill file for rung 5 is in the pack.</p></aside>
 </section>
+
+<!-- ===================================================
+     26 — THREE PROJECTS TO STEAL (overview)
+     =================================================== -->
+<section class="slide" data-swarm="calm" data-beat="Build">
+  <div class="corner tl"><span class="wc-mark"></span><span>Projects</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">If you want a finished thing by 16:00, take one of these</div>
+    <h2 class="display h2 reveal">Three projects <span class="ghost">to steal.</span></h2>
+    <div class="caps reveal">
+      <div class="cap" style="--c: var(--red)">
+        <div class="one">01 &middot; My Page</div>
+        <div class="lbl">A site that is<br>actually yours</div>
+        <div class="say">Not a template with your name swapped in. You hand Claude your <em>context</em> &mdash; who you are, your images, your taste &mdash; and it builds the page around it.</div>
+        <div class="eg"><b>Ships in:</b> one afternoon. <b>Needs:</b> nothing but a folder.</div>
+      </div>
+      <div class="cap" style="--c: var(--magenta)">
+        <div class="one">02 &middot; Inbox on autopilot</div>
+        <div class="lbl">Claude reads<br>your mail at 7am</div>
+        <div class="say">Connect the <b>Gmail MCP</b>, describe what a useful morning brief looks like, then put it on a <b>daily cron</b>. It runs while you sleep and hands you the summary.</div>
+        <div class="eg"><b>Ships in:</b> 30 minutes. <b>Needs:</b> a Google login.</div>
+      </div>
+      <div class="cap" style="--c: var(--blue)">
+        <div class="one">03 &middot; The dashboard</div>
+        <div class="lbl">Your spreadsheet,<br>as a real page</div>
+        <div class="say">Point Claude at an <b>Excel file on your laptop</b> and ask for one HTML page that visualises it. No BI tool, no upload, no account &mdash; it opens in your browser.</div>
+        <div class="eg"><b>Ships in:</b> 20 minutes. <b>Needs:</b> one .xlsx you already have.</div>
+      </div>
+    </div>
+    <p class="punch reveal">Each one is the same move: <em>give it context, ask for the thing, then iterate.</em></p>
+  </div>
+  <aside class="notes"><p>Three concrete starting points for anyone who doesn't have an idea of their own &mdash; and three that cover different mechanisms: pure Claude Code, MCP + routines, local data. Say out loud that all three are internal tools (the honest slide) so nobody needs permission or a business case to build them today.</p></aside>
+</section>
+
+<!-- ===================================================
+     27 — PROJECT 1: MY PAGE (the four ingredients)
+     =================================================== -->
+<section class="slide" data-swarm="off" data-beat="Build">
+  <div class="corner tl"><span class="wc-mark"></span><span>Project 01</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">Project 01 &middot; My Page</div>
+    <h2 class="display h2 reveal">Feed it you, <span class="ghost">then ask for the page.</span></h2>
+    <div class="flow reveal">
+      <div class="step">
+        <span class="num">1</span>
+        <div class="lbl">profile.md</div>
+        <div class="desc">A plain-English file about your life: what you do, what you've made, what you want people to feel. <em>No structure needed &mdash; just write.</em></div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="step">
+        <span class="num">2</span>
+        <div class="lbl">A folder of images</div>
+        <div class="desc">Photos of yourself, artwork, screenshots of past projects. Drop them in <code>assets/</code> and let Claude look at them.</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="step">
+        <span class="num">3</span>
+        <div class="lbl">A style template</div>
+        <div class="desc">Colours, fonts, screenshots of sites you like. <em>Two hex codes and a font name is already enough.</em></div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="step hot">
+        <span class="num">4</span>
+        <div class="lbl red">Ask for the site</div>
+        <div class="desc">"Build me a personal website from everything in this folder." Open it, say what's wrong, repeat.</div>
+      </div>
+    </div>
+    <p class="punch reveal">The quality of the page is the quality of the folder. <em>Context in, character out.</em></p>
+  </div>
+  <aside class="notes"><p>This is the context-engineering lesson in miniature, which is why it's the first project. The same prompt against an empty folder gives you a generic template; against a folder with a profile, images and a style reference it gives you something recognisably yours. Point at the files, not the prompt.</p><p>Tell them the boring truth: step 4 is never one shot. It's "open it, say the one thing that's wrong, again" &mdash; five or six times.</p></aside>
+</section>
+
+<!-- ===================================================
+     28 — PROJECTS 2 & 3: THE INBOX AND THE DASHBOARD
+     =================================================== -->
+<section class="slide" data-swarm="link" data-beat="Build">
+  <div class="corner tl"><span class="wc-mark"></span><span>Projects 02 &amp; 03</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">Two more, each plugging into something you already own</div>
+    <h2 class="display h2 reveal">Your mail. <span class="ghost">Your spreadsheet.</span></h2>
+    <div class="caps two reveal">
+      <div class="cap" style="--c: var(--magenta)">
+        <div class="one">Project 02</div>
+        <div class="lbl">Email automation</div>
+        <ul>
+          <li><b>Connect the Gmail MCP</b> &mdash; one setup step, then Claude can search, read and draft in your inbox.</li>
+          <li><b>Describe the brief you want</b> &mdash; what deserves your attention, what to ignore, how short the summary should be.</li>
+          <li><b>Put it on a daily cron</b> &mdash; a routine that runs every morning without you opening a terminal.</li>
+        </ul>
+        <div class="rule">Start read-only: <em>let it summarise for a week before it's allowed to send anything.</em></div>
+      </div>
+      <div class="cap" style="--c: var(--blue)">
+        <div class="one">Project 03</div>
+        <div class="lbl">Data dashboard</div>
+        <ul>
+          <li><b>Put the .xlsx in a folder</b> &mdash; sales, bookings, training log, expenses. Anything you already track.</li>
+          <li><b>Ask it to look first</b> &mdash; read the sheet, describe the columns, propose what's worth showing.</li>
+          <li><b>One HTML page out</b> &mdash; charts, filters, no backend. Double-click it and it's there.</li>
+        </ul>
+        <div class="rule">Your data never leaves the laptop except as the numbers Claude reads. <em>No upload, no account.</em></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><p>Project 2 is the MCP + routines beat made concrete, and it's the one people demo to their colleagues. Be explicit about the safety rung: connect it read-only first, watch what it writes for a week, and only then let it send. Nobody's first automation should be allowed to email their boss.</p><p>Project 3 is the one that lands with the non-developers in the room &mdash; almost everyone has an Excel file they stare at. The trick worth saying out loud: make it read and describe the sheet before it builds anything, otherwise it invents columns.</p></aside>
+</section>
+
+<!-- ===================================================
+     29 — PROJECT PROMPTS (click to copy)
+     =================================================== -->
+<section class="slide demo-slide copy-slide" data-swarm="link" data-beat="Build">
+  <div class="corner tl"><span class="wc-mark"></span><span>Project prompts</span></div>
+  <div class="slide-content">
+    <h2 class="display h2 xl reveal">Take one. Start now.</h2>
+    <ol class="prompts three hero reveal">
+      <li class="prompt" style="--c: var(--red)">
+        <div class="p-head"><span class="p-num">01</span><span class="p-who">My Page</span><button class="p-copy" type="button">Copy</button></div>
+        <p class="p-txt">In this folder you'll find <b>profile.md</b> (about me), an <b>assets/</b> folder with my photos and past work, and <b>style.md</b> with the colours and fonts I like. Read all of it first and tell me back, in five lines, who you think this page is for. Then build a single-page personal website, one HTML file, no frameworks, using my actual images. <b>Show me the plan before you build.</b></p>
+      </li>
+      <li class="prompt" style="--c: var(--magenta)">
+        <div class="p-head"><span class="p-num">02</span><span class="p-who">Email automation</span><button class="p-copy" type="button">Copy</button></div>
+        <p class="p-txt">Help me connect the <b>Gmail MCP server</b>, step by step, and check it works. Then, <b>read-only for now</b>: go through yesterday's mail and write me a morning brief &mdash; what needs an answer today, what can wait, what I can ignore, max ten lines. When I'm happy with the format, set it up as a <b>daily routine at 7am</b> and explain exactly what it will and won't be allowed to do.</p>
+      </li>
+      <li class="prompt" style="--c: var(--blue)">
+        <div class="p-head"><span class="p-num">03</span><span class="p-who">Data dashboard</span><button class="p-copy" type="button">Copy</button></div>
+        <p class="p-txt">There's an Excel file in this folder. <b>Read it first</b> &mdash; tell me what's in each column, how many rows, and the three things you think are actually worth visualising. Don't guess at columns that aren't there. Then build me <b>one self-contained HTML page</b> with those charts that I can open by double-clicking it, and tell me in one line how to refresh it when the spreadsheet changes.</p>
+      </li>
+    </ol>
+    <p class="copy-hint">Click a prompt, or press 1 – 3, to copy it</p>
+  </div>
+  <aside class="notes"><p>The take-home slide. Everything here is copy-pasteable into a fresh folder, and each prompt already carries the habits from the talk: read before you write, plan before you build, permissions stated out loud.</p></aside>
+</section>
+
+
+<!-- ===================================================
+     30 — SHOW AND TELL (the wall)
+     =================================================== -->
+<section class="slide" data-swarm="flock" data-beat="Build">
+  <div class="corner tl"><span class="wc-mark"></span><span>Show and tell</span></div>
+  <div class="slide-content">
+    <div class="kicker reveal">15:45 &mdash; the last fifteen minutes</div>
+    <h2 class="display h2 reveal">Put it on the wall.</h2>
+    <div class="wall reveal">
+      <div>
+        <p class="say">Whatever state it's in. <b>A half-finished page counts.</b> The one that broke in an interesting way counts most.</p>
+        <ol class="steps">
+          <li>Scan the code, give your <b>name and email</b>.</li>
+          <li>Drop a <b>link</b>, or the <b>.html / .md file</b> itself.</li>
+          <li>It appears on <b>the feed</b> &mdash; that's what's on this screen for the last fifteen minutes.</li>
+        </ol>
+      </div>
+      <div class="qr">
+        <a class="tile" href="https://build-with-agents.vercel.app/submit" target="_blank" rel="noopener"><svg viewBox="0 0 37 37" shape-rendering="crispEdges" role="img" aria-label="QR code to the submit page"><path d="M2 2.5h7m2 0h4m2 0h2m1 0h1m3 0h1m1 0h1m1 0h7m-33 1h1m5 0h1m2 0h1m1 0h1m5 0h2m1 0h3m3 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m1 0h5m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h4m1 0h1m2 0h2m3 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h6m3 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h2m1 0h1m1 0h1m1 0h2m1 0h1m3 0h1m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h2m1 0h1m2 0h1m1 0h1m1 0h1m3 0h1m-22 1h2m3 0h1m3 0h1m1 0h2m1 0h1m3 0h2m2 0h2m1 0h2m1 0h1m-30 1h2m1 0h1m5 0h1m3 0h2m1 0h1m2 0h2m1 0h3m1 0h1m2 0h1m2 0h1m-33 1h3m1 0h4m1 0h2m2 0h3m1 0h3m2 0h3m1 0h1m2 0h4m-33 1h2m2 0h2m1 0h2m2 0h1m3 0h2m1 0h1m3 0h1m1 0h2m1 0h3m1 0h2m-33 1h1m4 0h2m2 0h5m1 0h6m5 0h2m3 0h2m-32 1h4m3 0h1m3 0h3m2 0h2m3 0h3m1 0h2m1 0h4m-33 1h1m1 0h1m1 0h1m1 0h1m4 0h2m3 0h1m2 0h2m2 0h2m4 0h1m2 0h1m-30 1h1m3 0h1m1 0h1m1 0h3m2 0h1m1 0h1m1 0h1m1 0h1m2 0h2m2 0h1m-30 1h2m1 0h1m2 0h1m1 0h2m1 0h2m3 0h1m1 0h3m2 0h2m1 0h2m3 0h1m-32 1h6m1 0h1m1 0h1m1 0h1m2 0h3m1 0h3m2 0h2m1 0h1m2 0h1m1 0h2m-33 1h1m2 0h2m1 0h1m4 0h4m3 0h2m1 0h1m1 0h1m3 0h1m1 0h2m1 0h1m-32 1h3m1 0h1m2 0h1m1 0h1m1 0h3m1 0h2m2 0h1m1 0h1m5 0h2m-30 1h1m1 0h1m1 0h1m1 0h1m4 0h2m1 0h1m1 0h3m6 0h3m4 0h1m-32 1h3m1 0h1m1 0h3m4 0h2m2 0h4m1 0h2m1 0h2m1 0h1m2 0h1m-33 1h2m4 0h2m2 0h1m1 0h3m1 0h2m1 0h1m1 0h3m1 0h3m1 0h1m2 0h1m-31 1h2m1 0h1m6 0h1m1 0h1m1 0h1m5 0h1m3 0h1m2 0h1m1 0h2m-33 1h3m1 0h3m2 0h1m1 0h6m3 0h1m2 0h7m1 0h1m-24 1h1m1 0h1m3 0h3m1 0h2m2 0h1m1 0h1m3 0h1m2 0h2m-33 1h7m2 0h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m3 0h1m1 0h1m1 0h4m5 0h2m3 0h2m2 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m1 0h4m2 0h1m1 0h1m2 0h6m-29 1h1m1 0h3m1 0h1m2 0h4m3 0h2m1 0h2m2 0h1m1 0h1m1 0h3m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m1 0h5m1 0h1m2 0h1m2 0h2m1 0h3m-33 1h1m5 0h1m1 0h3m1 0h2m2 0h1m1 0h1m1 0h1m3 0h6m-30 1h7m2 0h3m3 0h2m1 0h1m1 0h1m3 0h2m1 0h2m3 0h1" stroke="currentColor" stroke-width="1" fill="none"/></svg></a>
+        <div class="url"><a class="lnk" href="https://build-with-agents.vercel.app/submit" target="_blank" rel="noopener">build-with-agents.vercel.app/submit&nbsp;&nearr;</a></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><p>Open this at 15:45 and leave it up. Then switch the projector to <b>/feed</b> and let the wall fill while people talk &mdash; it refreshes itself every twenty seconds, so you never touch it.</p><p>Two things to say out loud, because they decide whether anyone submits: <b>broken counts</b>, and the email is for reaching them afterwards, not for the screen &mdash; only the name shows. If the room is shy, put your own thing up first and talk through it; the wall fills fast once there is one card on it.</p><p>If nobody has a link, the file upload is the fallback: they drag the HTML file Claude just made them straight in.</p></aside>
+</section>
+
 
 <script>
 /* Fixed candidate names work on static hosts and file://, without a directory listing.
@@ -2294,7 +2563,15 @@ const dots = document.querySelector('.nav-dots');
 const bar = document.querySelector('.progress');
 const notesPanel = document.querySelector('.notes-panel');
 dots.innerHTML = '';
-slides.forEach((_, i) => { const b = document.createElement('button'); b.addEventListener('click', () => go(i)); dots.appendChild(b); });
+slides.forEach((s, i) => {
+  const b = document.createElement('button');
+  const heading = s.querySelector('h1, h2')?.textContent.replace(/\s+/g, ' ').trim() || s.dataset.beat;
+  b.type = 'button';
+  b.setAttribute('aria-label', `Slide ${i + 1}: ${heading}`);
+  b.title = `${i + 1} · ${heading}`;
+  b.addEventListener('click', () => go(i));
+  dots.appendChild(b);
+});
 let idx = -1;
 function go(i) {
   i = Math.max(0, Math.min(slides.length - 1, i));
@@ -2304,7 +2581,11 @@ function go(i) {
   setStep(slides[i], back ? fragSteps(slides[i]).length : 0);
   document.querySelectorAll('.pdwin').forEach(closePeek);
   slides.forEach((s, k) => s.classList.toggle('active', k === i));
-  [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
+  [...dots.children].forEach((d, k) => {
+    d.classList.toggle('on', k === i);
+    if (k === i) d.setAttribute('aria-current', 'step');
+    else d.removeAttribute('aria-current');
+  });
   bar.style.width = ((i + 1) / slides.length * 100) + '%';
   target = MODES[slides[i].dataset.swarm || 'calm'];
   location.hash = '#' + (i + 1);
@@ -2312,6 +2593,8 @@ function go(i) {
 }
 addEventListener('keydown', e => {
   if (e.target.matches('input, textarea')) return;
+  if (e.target.closest('[contenteditable="true"]')) return;
+  if (['Enter', ' '].includes(e.key) && e.target.closest('button, a')) return;
   if (['ArrowRight', 'ArrowDown', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
   else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
   else if (e.key === 'Home') go(0);
@@ -2478,7 +2761,11 @@ const SHIP_ROWS = [[0, 0, 0, 0, 0, 0, 0, 0, 3], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0,
   const plotW = W - L - R, plotH = H - T - B, n = SHIP_MONTHS.length, colW = plotW / n, MAX = 300000;
   const y = v => T + plotH - (v / MAX) * plotH;
   const ns = 'http://www.w3.org/2000/svg';
-  const el = (tag, attrs, text) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+  const el = (tag, attrs, text, parent) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; (parent || svg).appendChild(e); return e; };
+  /* A .frag group: held back by setStep() until the slide's first click, then animated in. */
+  const frag = (cls, delay) => { const g = document.createElementNS(ns, 'g'); g.setAttribute('class', 'frag ' + cls); g.dataset.frag = '1'; g.style.setProperty('--d', delay + 's'); svg.appendChild(g); return g; };
+  const MB = SHIP_MONTHS.indexOf('2026-05');
+  const mayAnno = frag('anno-frag', 0);
   for (let v = 0; v <= MAX; v += 50000) {
     el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), class: 'grid' });
     el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end', class: 'tick' }, v === 0 ? '0' : (v / 1000) + 'K');
@@ -2489,23 +2776,31 @@ const SHIP_ROWS = [[0, 0, 0, 0, 0, 0, 0, 0, 3], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0,
     if (mo === '01' || mo === '04' || mo === '07' || mo === '10') el('text', { x: cx, y: T + plotH + 16, 'text-anchor': 'middle', class: 'tick' }, ['Jan', 'Apr', 'Jul', 'Oct'][['01', '04', '07', '10'].indexOf(mo)]);
     if (mo === '06' || (yr === '2022' && mo === '11')) el('text', { x: cx, y: T + plotH + 36, 'text-anchor': 'middle', class: 'tickb' }, yr);
     let acc = 0;
+    const into = i >= MB ? frag('ship-frag', +(0.14 + (i - MB) * 0.09).toFixed(2)) : null;
     SHIP_ROWS[i].forEach((v, s) => {
       if (v <= 0) return;
       const top = y(acc + v), h = Math.max(y(acc) - top, v > 0 ? 0.8 : 0);
-      el('rect', { x: L + i * colW + 2.5, y: top, width: colW - 5, height: h, fill: COLORS[s] });
+      el('rect', { x: L + i * colW + 2.5, y: top, width: colW - 5, height: h, fill: COLORS[s] }, null, into);
       acc += v;
     });
   });
+  svg.appendChild(mayAnno);   /* move the May marker above the bars it annotates */
+  const mx = L + MB * colW;
+  el('line', { x1: mx, x2: mx, y1: T, y2: T + plotH, class: 'anno-line' }, null, mayAnno);
+  el('text', { x: mx - 10, y: T + 56, 'text-anchor': 'end', class: 'anno-b' }, '12 May 2026', mayAnno);
+  el('text', { x: mx - 10, y: T + 74, 'text-anchor': 'end', class: 'anno' }, 'motherbrain begins', mayAnno);
+  el('text', { x: mx - 10, y: T + 94, 'text-anchor': 'end', class: 'anno' }, 'one scale, no truncation', mayAnno);
+  const septAnno = frag('anno-frag', 0.95);
   const li = SHIP_MONTHS.length - 1, lx = L + li * colW + colW / 2, lv = SHIP_ROWS[li].reduce((a, b) => a + b, 0);
-  el('line', { x1: lx, x2: lx, y1: T + 20, y2: y(lv) - 6, class: 'anno-line', opacity: 0.45 });
-  el('text', { x: W - R, y: T + 12, 'text-anchor': 'end', class: 'anno' }, 'Sept \u2014 10 days in');
-  const mb = SHIP_MONTHS.indexOf('2026-05'), mx = L + mb * colW;
-  el('line', { x1: mx, x2: mx, y1: T, y2: T + plotH, class: 'anno-line' });
-  el('text', { x: mx - 10, y: T + 56, 'text-anchor': 'end', class: 'anno-b' }, '12 May 2026');
-  el('text', { x: mx - 10, y: T + 74, 'text-anchor': 'end', class: 'anno' }, 'motherbrain begins');
-  el('text', { x: mx - 10, y: T + 94, 'text-anchor': 'end', class: 'anno' }, 'one scale, no truncation');
+  el('line', { x1: lx, x2: lx, y1: T + 20, y2: y(lv) - 6, class: 'anno-line', opacity: 0.45 }, null, septAnno);
+  el('text', { x: W - R, y: T + 12, 'text-anchor': 'end', class: 'anno' }, 'Sept \u2014 10 days in', septAnno);
   const legend = document.getElementById('ship-legend');
   SHIP_NAMES.forEach((nm, s) => { const sp = document.createElement('span'); sp.innerHTML = `<i style="background:${COLORS[s]}"></i>${s === 8 ? 'Other (38 repos)' : nm} <b>${TOTALS[s]}</b>`; legend.appendChild(sp); });
+  /* These <g> fragments appear after the step machinery has already walked the deck, so drop
+     the slide's cached step list and re-apply the step it is currently on. */
+  const slide = svg.closest('.slide');
+  slide._steps = null;
+  setStep(slide, slide._step || 0);
 })();
 
 /* hide the cursor + nav dots after a few idle seconds so the stage stays clean */

@@ -5,3 +5,11 @@ build_with_claude_workshop.md
 CLAUDE.md
 README.md
 docs/
+
+# Local-only; the real token comes from the project env.
+.env.local
+.vercel
+node_modules
+.fallowrc.json
+.fallow/
+scripts/

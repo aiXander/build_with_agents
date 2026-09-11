@@ -1,0 +1,16 @@
+{
+  "name": "build-with-agents",
+  "private": true,
+  "type": "module",
+  "description": "Static workshop deck + the /submit and /feed link wall API routes.",
+  "dependencies": {
+    "@vercel/blob": "^2.0.0"
+  },
+  "scripts": {
+    "wall": "node scripts/wall.mjs list",
+    "wall:restore": "node scripts/wall.mjs restore",
+    "wall:rm": "node scripts/wall.mjs rm",
+    "wall:emails": "node scripts/wall.mjs emails",
+    "wall:wipe": "node scripts/wall.mjs wipe --yes"
+  }
+}
