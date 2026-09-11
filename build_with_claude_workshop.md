@@ -6,14 +6,14 @@ everything behind it: the brief, the story, the per-beat talk notes, the **slide
 is built from (§4)**, the build-session ladder, the takeaway pack, logistics, risks, and the
 open decisions.
 
-> **Deck status:** built to the slide map in §4 (37 slides, same visual system as the
+> **Deck status:** built to the slide map in §4 (46 slides, same visual system as the
 > launch deck). Speaker view: `N` toggles per-slide notes (the §3 talk notes, condensed), `T` a
 > 60-minute elapsed clock. Keys and clickers advance; **clicking does not** (the copy slides, the
-> notes panel and the steps on slide 18 are clickable). Slides 27, 29 and 37 are click-to-copy (or
-> press the prompt's number). Slide 18 builds in five steps (→ or a tap) before the deck moves on; going
+> notes panel and the steps on slide 19 are clickable). Slides 31, 33, 38 and 46 are click-to-copy (or
+> press the prompt's number). Slide 19 builds in five steps (→ or a tap) before the deck moves on; going
 > back into it shows all five. On phones and touch tablets each slide scrolls vertically and a swipe
 > or the on-screen arrows advance; the nav dots, key hints and notes panel are hidden there.
-> Slides 9 and 20 use HTML mock-ups (a terminal, the trimmed global file) instead of screenshots.
+> Slides 10 and 22 use HTML mock-ups (a terminal, the trimmed global file) instead of screenshots.
 > The four-years chart (slide 4) is redrawn from the *Four Years of Shipping* report; its data is
 > embedded in the deck's script (`SHIP_ROWS`), monthly totals exact, per-repo split to ~1K lines.
 
@@ -88,18 +88,21 @@ the deciding. That table is the hook slide.
 
 ## 3. The talk (13:00 – 14:00)
 
-Six beats, ~55 minutes of content planned for 50 so questions can breathe. Demos over
-slides wherever possible. The beats build on each other: *agent → context → the file that
-holds the context → the English that produces the code → what you'll do with it.*
+Seven beats, ~62 minutes of content for a 60-minute slot — deliberately over budget, so the cut
+order in §7 matters and at least one item on it *will* be used. Demos over slides wherever
+possible. The beats build on each other: *agent → context → the file that holds the context →
+the English that produces the code → what it takes to put the result on the internet → what
+you'll do with it.*
 
 | # | Beat | Min | The one idea |
 |---|---|---|---|
 | 3.1 | The hook | 8 | The only thing that changed was how I work |
-| 3.2 | What an agent actually is | 8 | A model + tools + a loop |
-| 3.3 | Everything is context engineering | 12 | Your real job is managing one context window; tools, MCP, skills and `.md` files are all ways to do that |
+| 3.2 | What an agent actually is | 9 | A model + tools + a loop — and the harness runs wherever you put it |
+| 3.3 | Everything is context engineering | 13 | Your real job is managing one context window; tools, MCP, skills and `.md` files are all ways to do that — and a full window is a worse model |
 | 3.4 | CLAUDE.md: the most valuable tokens of your life | 8 | The file the model reads first, every time — global and per project |
-| 3.5 | 80% of my tokens are English | 14 | The loop: Analyze & Propose → Improve → Implement → Review; grill yourself; the prompts I reuse; the failures |
-| 3.6 | What people actually do with it + bridge | 5 | The use-case menu, then the ladder |
+| 3.5 | 80% of my tokens are English | 15 | The loop: Analyze & Propose → Improve → Implement → Review; work in sprints, not tweaks; grill yourself; the prompts I reuse; the failures; two weeks is a day |
+| 3.6 | Deploy your own product | 5 | A product is many pieces; for every one you don't know, ask — the lesson: a willingness to learn |
+| 3.7 | What people actually do with it + bridge | 4 | The use-case menu, then the ladder |
 
 ### 3.1 The hook (8 min)
 
@@ -114,7 +117,7 @@ holds the context → the English that produces the code → what you'll do with
 Stage notes: the demo must be rehearsed and have a fallback (screen recording) in case the
 venue wifi dies. Keep it under 3 minutes.
 
-### 3.2 What an agent actually is (8 min)
+### 3.2 What an agent actually is (9 min)
 
 Demystify. Most people picture either a chatbot or a sci-fi robot. It's neither.
 
@@ -133,7 +136,16 @@ Four slides in the deck (5–8), one running example: the model is a text machin
 description and a call is text the model writes → the harness (ten lines of code) catches it,
 runs the real function, pastes the result back → the loop. No architecture porn.
 
-### 3.3 Everything is context engineering (12 min)
+**Then one slide on where the harness runs (slide 9)**, because beginners never ask and it bites
+them in week one. The model is always remote — Anthropic's servers. The *harness* is the part you
+place. In Claude Code the harness is a program in your terminal, on your laptop: the loop, the tool
+calls, your files are all local, which is why closing the lid stops everything. On the claude.ai
+website the harness runs on their servers: close the lid, open your phone, the conversation is still
+there — but that harness can't touch your files or your tools. The fix, once you want an agent that
+keeps working: run your own harness on an always-on machine in the cloud (a small VM; many ways to
+do it), and talk to it from your phone. Same loop, different room.
+
+### 3.3 Everything is context engineering (13 min)
 
 The intellectual centre of the talk. "Prompt engineering" was about the sentence you type.
 Working with agents is about **what's in the window and when it gets there.**
@@ -161,7 +173,7 @@ MCP reading the member CRM (MCP); the `event_calendar` skill teaching the agent 
 recommend events (skill); `docs/reference/*.md` — one doc per subsystem, loaded only when
 that subsystem is touched (docs on demand).
 
-In the deck the table (slide 11) is followed by one slide per mechanism (12–17), each with a
+In the deck the table (slide 12) is followed by one slide per mechanism (13–18), each with a
 visual of the thing itself and the same three facts: what it is, when it's in the window, where
 it shows up in the brain. The three words in the workshop title are three of the six.
 
@@ -175,7 +187,18 @@ Two rules that follow directly, and that beginners get wrong:
 3. **More skills is not a better agent.** Only a skill's *body* is lazy — its description
    sits in the window every session, forever, and the model has to choose between all of
    them. Twenty half-used skills is a junk drawer you pay rent on. Install for a pain you
-   actually had this week; write your own for the chores you repeat. (Paid off in 3.6.)
+   actually had this week; write your own for the chores you repeat. (Paid off in 3.7.)
+
+**Context rot** (slide 20, right after progressive disclosure, which ends on "the conversation so
+far — the one block you can't unload"). The window has a hard limit, but the answers get worse long
+before you hit it: the fuller the window, the worse the model. In hour three of a session it still
+reads everything, but it holds on to less — it forgets a rule from hour one, repeats itself, drifts
+from the plan; it is slower and pricier too. Two fixes, in order of how much I trust them. The real
+one: **condense and start over** — ask for a handover (what changed, what was decided, what's open)
+into a markdown doc, then open a fresh session that reads that doc. The doc is the version you can
+read and correct, and it is exactly the handover prompt in Appendix B. The lazy one: `/compact`,
+which squeezes the conversation in place; fine for a quick reset, invisible to you. Say the habit
+out loud: long session → write it down → new session. It is the `docs/` move at a smaller scale.
 
 **The shape test — which of the six a thing belongs in.** Two questions: *does it fire at a
 moment, or always?* and *is it yours, or anyone's?* **Always + yours** is `CLAUDE.md`: how you
@@ -244,7 +267,7 @@ so when I ask it to help with something, it knows what everything nests under."*
 principle: context engineering isn't a coding thing. Anything you'd explain to a new
 colleague on day one belongs in a file.
 
-### 3.5 80% of my tokens are English (14 min)
+### 3.5 80% of my tokens are English (15 min)
 
 The most valuable beat for beginners and the part most talks skip. The workflow, not the
 tech. Open with the number: **most of what I do with the model is not code.** It's sprint
@@ -260,7 +283,7 @@ never written a line of code but have all run a team: you are not a typist any m
 **manager whose entire job is the meeting.** Your team ships in the hour and never gets bored
 of your questions; what it needs from you is exactly what any team needs — to know what we're
 building, why, and what each of them picks up next. So the work moves into the artefacts a
-good manager produces, and slide 25 maps them one to one: the plan doc is **the brief**;
+good manager produces, and slide 27 maps them one to one: the plan doc is **the brief**;
 "grill me" is **the 1:1** where you discover they understood something else; "step 1 only, then
 stop" is **scoping the ticket**, not doing it; the cold review is **code review**; `CLAUDE.md`
 is **the onboarding doc** every new hire reads; the handover is **the meeting notes**.
@@ -271,7 +294,7 @@ Two things keep this from being a joke about bullshit jobs. Say both:
   Here the code is regenerated from the doc — so improving the paragraph *is* shipping. That
   is where the 80% goes, and why the English artefacts get better every loop while the code
   is disposable.
-- **Your team has amnesia.** The one place the metaphor breaks, and the callback to slide 9
+- **Your team has amnesia.** The one place the metaphor breaks, and the callback to slide 10
   ("that scrollback is its entire world"). A colleague remembers Tuesday; this one doesn't.
   Anything you didn't write into a file was said to someone who has already left — which is
   the entire reason `CLAUDE.md` and `docs/` exist.
@@ -288,12 +311,32 @@ Two things keep this from being a joke about bullshit jobs. Say both:
 Then it cycles: the review feeds the next proposal. The English artefacts (plan doc,
 reference doc, CLAUDE.md) get *better* with every loop; the code is regenerated from them.
 
-**What that looks like on a normal day:** ~80% of my prompts are literally one of two,
-both pointed at the same file — *"Read `docs/TODO/<plan>.md` — analyze, scrutinize and
+**Then the unit-of-work slide (30), which is the habit most beginners get wrong.** The instinct
+is one tiny prompt per tiny edit: *"make this button red, bump the font a bit, centre the
+text"* — a new tab, a new cold start, three sessions that each know nothing about the other two
+and leave nothing behind. The alternative is a **sprint**: one dedicated push that bundles
+everything touching the same part of the stack. Same three edits, said once: *"read the brand
+template, then polish the entire site to that spec — professional, clean, and don't forget the
+phone view."* Bigger asks get better answers, because the agent can see how the pieces relate
+instead of nudging one pixel blind.
+
+The habit to teach, and the thing that ties this beat to 3.4: **ideas go into the sprint doc,
+not into a new tab.** When something occurs to you mid-week, explain it to the agent and have it
+folded into the plan; then point a coding agent at that doc. That is exactly what the three
+prompts on the next slide do — which is why they all aim at the same file.
+
+**What that looks like on a normal day (slide 31):** ~50% of my prompts are literally one of
+three, all pointed at the same docs — *"Read `docs/TODO/<plan>.md` — analyze, scrutinize and
 improve this spec before I hand it off to a coding agent"* (steps 1–2, typed ten times per
-feature; the output is a better file, not code) and *"Implement `docs/TODO/<plan>.md`"*
-(step 3, typed once). Say the asymmetry out loud: beginners assume the skill lives in the
-second prompt; it lives entirely in the first.
+feature; the output is a better file, not code), *"Implement `docs/TODO/<plan>.md`"* (step 3,
+typed once), and the one nobody does: *"Take everything we did and learned in this session and
+persist it in the docs, so a future session can pick it up cold."* Say the asymmetry out loud:
+beginners assume the skill lives in the second prompt; it lives entirely in the first.
+
+The third is the **save button**, and the callback to *your team has amnesia* (slide 28): a
+session you don't write down is thrown away, and tomorrow's agent starts from zero. It is the
+same move as the context-rot fix (slide 20) and the doc pass in 3.4 — said as a habit rather
+than a workflow, because that is how people will actually use it.
 
 **Grill me** — the one skill to take home. It's a ~20-line `SKILL.md` (full text in
 Appendix A) that turns the model into a relentless interviewer: it maps your idea as a
@@ -331,7 +374,59 @@ full text; the slide shows three). Draft versions below; swap in real ones from 
 money, auth, data deletion, or other people's data: read every line, and put that rule in
 `CLAUDE.md` so the agent asks before it ships.
 
-### 3.6 What people actually do with it + bridge (5 min)
+**Close the beat by resetting their sense of scale (slide 36).** Ask Claude how long something
+will take and it answers like a tech lead scoping a team: *"about two weeks."* It is quoting its
+training data — tickets, standups, handovers, people who go home at six. In practice a
+"two-week" feature is usually **a day**: an afternoon of deciding, twenty minutes of generation.
+Two honest caveats so it isn't hype — the day is real work (the spec, the review, the going-live
+list from 3.6), and the 10× only holds when the spec is good, which is what the previous six
+slides were about. The failure mode in this room won't be over-ambition; it's people building
+the small version of their idea because they're still pricing it in 2023 hours. So: ask for the
+estimate, then ask the follow-up — *"what would this look like if we did all of it today?"*
+
+### 3.6 Deploy your own product (5 min)
+
+The beat that stops "it works on my laptop" from being the end of the story. Nobody else can see
+a thing that runs on your laptop; a product is the same code plus everything that lets a stranger
+open a URL and use it. Beginners don't know that list exists, and the list is exactly what makes
+them feel "I'm not a dev". So: show the list once, not deep, then hand them the way out.
+
+**The pieces (slide 37)** — one card each, with the kind of service that provides it. Examples,
+not recommendations; the ones I used are in the slide-3 table.
+
+| Piece | What it is, in one line | Where it lives |
+|---|---|---|
+| The pages | What people see and click | A website host: Vercel, Netlify |
+| The code that runs | Your logic, answering requests | A cloud: Modal, AWS, GCP — or a €5 server |
+| The data | What has to survive a reload | A database: Neon, Supabase, Postgres |
+| Who is who | Sign-up, login, permissions | An auth service: Clerk, Auth0 |
+| A name | A domain, DNS, the padlock (HTTPS) | Any registrar; the host does the padlock |
+| Secrets | API keys, passwords | The host's settings — never in git |
+| Things on a schedule | Nightly jobs, reminders | Cron, routines |
+| Knowing it broke | Logs, alerts | The host's dashboard, one alert channel |
+| Paying for it | The bill you didn't expect | A spend cap, set on day one |
+
+Say plainly: the slide-3 stack table *was* this list, filled in once. Yours will be filled in
+differently. And the boring choice (managed, free tier, popular) is the right first choice — you
+are buying "someone else runs it" so you can keep building.
+
+**For everything you don't know: ask (slide 38).** The point of the section. The agent knows every
+one of these providers better than any tutorial, and the loop from 3.5 applies unchanged: no-code
+proposal first (which pieces, simplest option each, why, what it costs), then one step at a time,
+then "how do you know it's live?". Two click-to-copy prompts on the slide, both in the pack
+(Appendix B, 8 and 9): the going-live walk-through, and the "explain this piece to me as if I've
+never built software" prompt for any word on the previous slide they didn't recognise.
+
+**The most important lesson of the workshop (slide 39)** — the section's capstone and the
+emotional peak of the talk, so it gets a quiet full-screen slide and a breath before the use-case
+menu. When you start building something you'll have gaps in your knowledge everywhere: hosting,
+databases, auth, deploys, words you've never heard. That feels daunting, and the sentence that
+follows is "I'm not a dev". The core insight: AI can help you understand *and* do every single one
+of those things. What it asks of you is not knowledge. It's patience, and a gigantic willingness to
+learn as you go. **If your will is strong, you can build anything.** Say it slowly; it's the line
+people quote back.
+
+### 3.7 What people actually do with it + bridge (4 min)
 
 A single "use-case menu" slide, deliberately not all code, because half the room won't
 write software next week. (Inspired by the "Master Claude in 28 days" poster; use the
@@ -357,7 +452,7 @@ that capability arrives by installing things. Everything in the previous forty m
 the opposite: the leverage was in the context, and the best skill you will ever own is the
 twenty lines of English you write about the chore *you* repeat.
 
-So slide 33 is a **diagnosis, not a shopping list** — *what hurts → what fixes it* — and the
+So slide 41 is a **diagnosis, not a shopping list** — *what hurts → what fixes it* — and the
 thing to point at on stage is how often the fix is a paragraph in `CLAUDE.md` rather than a
 download. Two rules on screen:
 
@@ -403,41 +498,51 @@ and leave it on the projector during the build.
 | 6 | **A tool is a description in the window. A tool call is just text the model writes.** | The window with the tool's plain-text description + the model generating `<call>get_weather("Ghent")</call>`; "nothing has happened yet" | 3.2 |
 | 7 | **The harness catches the call, runs real code, and pastes the result back** | The same window with the result appended + a ten-line harness loop in code | 3.2 |
 | 8 | **A model. Some tools. A loop.** | Think (model) → Act (harness) → Observe (window); "a chatbot stops after think"; live tool-call demo cue | 3.2 |
-| 9 | **That scrollback is its entire world** | Terminal mock with the context window outlined; "brilliant, with amnesia" | 3.2→3.3 |
-| 10 | **Everything is context engineering** | The one-liner: *the right context, at the right moment, and nothing else* | 3.3 |
-| 11 | **Six ways to put things in the window** | The mechanism table (CLAUDE.md / docs / skills / tools / MCP / memory) with "when loaded" column | 3.3 |
-| 12 | **CLAUDE.md — read first, every session** | The file anatomy (mission / layout / commands / rules / pointers); what · when · in the brain | 3.3 |
-| 13 | **docs/*.md — read only when the subject comes up** | The `docs/reference/` tree with one file lit for today's task; what · when · in the brain | 3.3 |
-| 14 | **Skills — a hook always on, a body on trigger** | `SKILL.md` anatomy: frontmatter (always) vs body (on trigger); what · when · in the brain | 3.3 |
-| 15 | **Tools — one verb each, described in text** | `find_matches` as the model sees it (schema + token cost) → the call the model writes → the result; what · when · in the brain | 3.3 |
-| 16 | **MCP servers — publish once, plug in anywhere** | Your agent plugged into three servers (browser, Odoo CRM, community brain), each "tools + instructions"; what · when · in the brain | 3.3 |
-| 17 | **Memory — written now, read back later** | Session 1 writes → memory store → session 2 recalls (the Pixiboo example); what · when · in the brain | 3.3 |
-| 18 | **Progressive disclosure** | Three windows side by side, block height = tokens: "paste everything" (over budget) vs session start vs "grill me on the memory bug". Builds in five steps (→ or tap): session start → ten minutes later → the skill body loads → the doc loads, still fits → the stale-context corollary. Tap any block to peek at what is inside it | 3.3 |
-| 19 | **CLAUDE.md contains the most valuable tokens of your life** | Global vs project table; "the compressed residue of every mistake" | 3.4 |
-| 20 | **It's just prose** | The trimmed real global file, rendered as two-column prose | 3.4 |
-| 21 | **How to talk to me** | The five communication rules (earn its place / one example / no bare pointers / rich markdown / toolchain once) | 3.4 |
-| 22 | **The map, not the encyclopedia** | What belongs in CLAUDE.md vs in a doc vs in git; the "would a cold agent be misled?" test; size budget | 3.4 |
-| 23 | **Docs are the agent's working memory** | TODO → reference → finished flow; "a map, not a mirror"; "docs follow code, never lead it" | 3.4 |
-| 24 | **80% of my tokens are English** | Big number; what the English is (plans, specs, reviews, handovers); "code is the compile step" | 3.5 |
-| 25 | **The job is the meeting** | *What you do → what it is on a team* (brief · cold review · 1:1 · onboarding doc · scoping the ticket · meeting notes); the notes are executable, so improving the paragraph is shipping; and the one place it breaks — your team has amnesia | 3.5 |
-| 26 | **Analyze & Propose → Improve → Implement → Review** | The four-step loop as a cycle; one rule per step | 3.5 |
-| 27 | **80% of my prompts are one of these two** | The two verbatim prompts side by side, click-to-copy: *"Read `docs/TODO/<plan>.md` — analyze, scrutinize and improve this spec before I hand it off to a coding agent"* and *"Implement `docs/TODO/<plan>.md`"*; the asymmetry (01 typed ten times per feature, 02 once) | 3.5 |
-| 28 | **Grill me** | The skill in three lines: design tree · frontier rounds · you decide, it looks things up; live demo cue | 3.5 |
-| 29 | **Prompts I reuse** | Three prompts verbatim (opener, scoped build, cold review), click-to-copy; "full library in the pack" | 3.5 |
-| 30 | **Three times it went wrong** | The failure stories, one line + lesson each | 3.5 |
-| 31 | **Trust / Check** | Two columns | 3.5 |
-| 32 | **What people actually do with it** | The use-case menu (9 rows, mechanism column) | 3.6 |
-| 33 | **Skills are not stickers** | *What hurts → what fixes it*, six rows — two named third-party skills (`humanizer`, an interface-polish pass), `grilling`, and twice a paragraph in `CLAUDE.md` rather than a download; then the shape test (a moment vs always, yours vs anyone's) and: write one before you install five, read anything you install | 3.6 |
-| 34 | **Six rungs** | The build ladder table | 3.6 |
-| 35 | **You are the imagination.** | Manifesto beat; Murmura mention | 3.6 |
-| 36 | **Go build** | Rules of the floor; helpers; "rung zero starts now" | 3.6 |
-| 37 | **Starter prompts** | Click-to-copy cheat sheet, one block per rung (see §5) — stays on screen | build |
+| 9 | **Where does the harness run?** | Three cards: Claude Code = harness on your laptop (close the lid, everything stops) · claude.ai = harness in the cloud (survives the lid, can't touch your files) · the fix = your own harness on an always-on VM, talk to it from your phone | 3.2 |
+| 10 | **That scrollback is its entire world** | Terminal mock with the context window outlined; "brilliant, with amnesia" | 3.2→3.3 |
+| 11 | **Everything is context engineering** | The one-liner: *the right context, at the right moment, and nothing else* | 3.3 |
+| 12 | **Six ways to put things in the window** | The mechanism table (CLAUDE.md / docs / skills / tools / MCP / memory): role + "when loaded" columns only; what each *is* gets said, and gets its own slide next | 3.3 |
+| 13 | **CLAUDE.md — read first, every session** | The file anatomy (mission / layout / commands / rules / pointers); what · when · in the brain | 3.3 |
+| 14 | **docs/*.md — read only when the subject comes up** | The `docs/reference/` tree with one file lit for today's task; what · when · in the brain | 3.3 |
+| 15 | **Skills — a hook always on, a body on trigger** | `SKILL.md` anatomy: frontmatter (always) vs body (on trigger); what · when · in the brain | 3.3 |
+| 16 | **Tools — one verb each, described in text** | `find_matches` as the model sees it (schema + token cost) → the call the model writes → the result; what · when · in the brain | 3.3 |
+| 17 | **MCP servers — publish once, plug in anywhere** | Your agent plugged into three servers (browser, Odoo CRM, community brain), each "tools + instructions"; what · when · in the brain | 3.3 |
+| 18 | **Memory — written now, read back later** | Session 1 writes → memory store → session 2 recalls (the Pixiboo example); what · when · in the brain | 3.3 |
+| 19 | **Progressive disclosure** | Three windows side by side, block height = tokens: "paste everything" (over budget) vs session start vs "grill me on the memory bug". Builds in five steps (→ or tap): session start → ten minutes later → the skill body loads → the doc loads, still fits → the stale-context corollary. Tap any block to peek at what is inside it | 3.3 |
+| 20 | **Context rot. The fuller the window, the worse the answers.** | One window in hour three, the conversation block filling most of it ("still fits · the answers get worse"); three cards: the symptom (forgets hour-one rules, repeats, drifts) · the fix (handover into a markdown doc, fresh session reads it) · the lazy version (`/compact`); "long session → write it down → new session" | 3.3 |
+| 21 | **CLAUDE.md contains the most valuable tokens of your life** | Global vs project table; "the compressed residue of every mistake" | 3.4 |
+| 22 | **It's just prose** | The trimmed real global file, rendered as two-column prose | 3.4 |
+| 23 | **How to talk to me** | The five communication rules (earn its place / one example / no bare pointers / rich markdown / toolchain once) | 3.4 |
+| 24 | **The map, not the encyclopedia** | What belongs in CLAUDE.md vs in a doc vs in git; the "would a cold agent be misled?" test; size budget | 3.4 |
+| 25 | **Docs are the agent's working memory** | TODO → reference → finished flow; "a map, not a mirror"; "docs follow code, never lead it" | 3.4 |
+| 26 | **80% of my tokens are English** | Big number; what the English is (plans, specs, reviews, handovers); "code is the compile step" | 3.5 |
+| 27 | **The job is the meeting** | *What you do → what it is on a team* (brief · cold review · 1:1 · onboarding doc · scoping the ticket · meeting notes); one line: the notes are executable, so improving the paragraph is shipping | 3.5 |
+| 28 | **Your team has amnesia** | Quiet vision slide, the one place the metaphor breaks: a colleague remembers Tuesday, this one's world is the scrollback | 3.5 |
+| 29 | **Analyze & Propose → Improve → Implement → Review** | The four-step loop as a cycle; one rule per step | 3.5 |
+| 30 | **Think in sprints, not tweaks** | Two cards: *a tab per tweak* ("make this button red, bump the font, centre the text" — a cold start per idea, nothing written down) vs *a sprint* ("read the brand template, then polish the entire site to that spec — professional, clean, don't forget the phone view"); punchline: a new idea goes into the sprint doc, not into a new tab | 3.5 |
+| 31 | **50% of my prompts are one of these three** | Three verbatim prompts, click-to-copy: *"Read `docs/TODO/<plan>.md` — analyze, scrutinize and improve this spec before I hand it off to a coding agent"*, *"Implement `docs/TODO/<plan>.md`"*, and *"Take everything we did and learned in this session and persist it in the docs, so a future session can pick it up cold"*; the asymmetry (01 typed ten times per feature, 02 once) and 03 as the save button | 3.5 |
+| 32 | **Grill me** | The skill in three lines: design tree · frontier rounds · you decide, it looks things up; live demo cue | 3.5 |
+| 33 | **Prompts I reuse** | Three prompts verbatim (opener, scoped build, cold review), click-to-copy; "full library in the pack" | 3.5 |
+| 34 | **Three times it went wrong** | The failure stories, one line + lesson each | 3.5 |
+| 35 | **Trust / Check** | Two columns | 3.5 |
+| 36 | **If it says two weeks, it's probably a day** | Three cards: where the estimate comes from (it's quoting human teams from its training data) · where your time actually goes (deciding, not typing) · so aim higher (the "someday, if I had a team" idea is this weekend); follow-up question: *"what would this look like if we did all of it today?"* | 3.5 |
+| 37 | **A product is more pieces than the code** | Nine cards, the pieces map from §3.6 (pages · code that runs · data · who is who · a name · secrets · schedule · knowing it broke · paying), each with the kind of service that provides it; "the stack table at the start was this list, filled in once — pick boring" | 3.6 |
+| 38 | **For everything you don't know: ask.** | Two prompts click-to-copy: *going live* (pieces + simplest option + cost, wait, then one step at a time with "how can I check it's live") and *explain a piece* ("as if I've never built software, one paragraph, then the one decision I have to make") | 3.6 |
+| 39 | **The only thing you need: a willingness to learn.** | Quiet vision slide, the lesson of the workshop: the gaps are everywhere and it feels like "I'm not a dev" — AI can help you understand and do every one of them; all it asks is patience and a gigantic willingness to learn as you go. Punchline: *if your will is strong, you can build anything* | 3.6 |
+| 40 | **What people actually do with it** | The use-case menu (9 rows, mechanism column) | 3.7 |
+| 41 | **Skills are not stickers** | *What hurts → what fixes it*, six rows — two named third-party skills (`humanizer`, an interface-polish pass), `grilling`, and twice a paragraph in `CLAUDE.md` rather than a download | 3.7 |
+| 42 | **Does it fire at a moment, or always? Is it yours, or anyone's?** | The shape test as two cards: always + yours = `CLAUDE.md` (not a download); a moment + anyone's = a skill (worth sharing); punchline: write one before you install five, read anything you install | 3.7 |
+| 43 | **Six rungs** | The build ladder table | 3.7 |
+| 44 | **You are the imagination.** | Manifesto beat; Murmura mention | 3.7 |
+| 45 | **Go build** | Rules of the floor; helpers; "rung zero starts now" | 3.7 |
+| 46 | **Starter prompts** | Click-to-copy cheat sheet, one block per rung (see §5) — stays on screen | build |
 
-Slides 9, 20 and 28 are demo cues, not content slides — they should be visually quiet. Slides 5–8
-build the agent up step by step (text machine → tool as text → harness → loop) around one
-running example (`get_weather`); slides 12–17 are one slide per mechanism from the table on
-slide 11, each with the same three facts: what it is, when it's in the window, where it shows up
-in the brain.
+Slides 10, 22 and 32 are demo cues, not content slides — they should be visually quiet, as are
+the two vision slides that carry a single line (28, 39). Slides 5–8 build the agent up step by
+step (text machine → tool as text → harness → loop) around one running example (`get_weather`),
+and slide 9 places the harness; slides 13–18 are one slide per mechanism from the table on
+slide 12, each with the same three facts: what it is, when it's in the window, where it shows up
+in the brain. Slides 37–39 are the deploy section: the map, the way out, the lesson.
 
 ---
 
@@ -495,7 +600,7 @@ Connect one MCP server. Options, from easiest to most interesting:
 
 Default to the browser one; it produces the strongest "it just did that?" moment and needs
 no keys. Have the filesystem one as a fallback for machines where the browser extension
-won't install. Tie back to slide 7: "you just added reach — new tools *and* the
+won't install. Tie back to slide 17: "you just added reach — new tools *and* the
 instructions for using them, in one plug."
 
 Say the safety line once, out loud, while everyone is connecting: an agent driving a browser
@@ -528,8 +633,12 @@ steering is done in English, in files, once.
 - Starter prompt: "Here's my idea in two sentences: … Grill me." Answer one round.
 - Then the plan-first prompt: five-step plan, flag the hardest part, build step one.
   Helpers roam.
+- **Close the rung with the persistence prompt** (Appendix B, 5): *"take everything we did and
+  learned in this session and persist it in the docs."* Two minutes, and it is the difference
+  between going home with a folder and going home with a folder that a fresh agent can continue
+  on Monday. This is slide 31's third prompt, felt rather than told.
 
-People who finish early: pick anything from the use-case menu (slide 32).
+People who finish early: pick anything from the use-case menu (slide 40).
 
 ### 5.6 Thunder talks (15 min)
 
@@ -549,10 +658,10 @@ created next to this doc as `workshop_pack/`:
 
 | File | What | Source |
 |---|---|---|
-| `README.md` | The ladder + the cheat-sheet prompts, plain markdown | §5 + slide 37 |
+| `README.md` | The ladder + the cheat-sheet prompts, plain markdown | §5 + slide 46 |
 | `CLAUDE.global.template.md` | A starter global CLAUDE.md, ~25 lines, with `<fill in>` slots | Appendix C |
 | `skills/grilling/SKILL.md` | The grilling skill, verbatim | Appendix A |
-| `prompts.md` | The prompt library | Appendix B |
+| `prompts.md` | The prompt library, incl. the two going-live prompts from slide 38 | Appendix B |
 | `docs_workflow.md` | The TODO → reference → finished pattern in one page | 3.4 |
 | `skills.md` | The *what hurts → what fixes it* diagnosis, the Day 1 / Day 2 / Week 1 order, and the read-before-you-install rule | Appendix D |
 | `links.md` | Install page, MCP servers used, Claude in Chrome, Murmura | — |
@@ -600,13 +709,16 @@ artefacts. Ideal: people from the Murmura crowd who already use Claude Code dail
 
 ### Timing buffers
 
-The talk is scheduled at exactly 60 minutes with no buffer. Content is planned for ~50
-minutes. If running late: drop the third failure story, then the `life_goals.md` aside, then
-slide 33 (*skills are not stickers* — it survives in the pack), then compress slide 23 (docs
-are the agent's working memory) to one sentence — never cut the grill demo. Slide 25 (*the job
-is the meeting*) can be said over slide 24 in two sentences if the clock is really gone, but
-it's the beat that lands with the non-coders in the room, so cut it last. If the talk
-runs over, cut rung-4 time, never rung-0 time.
+The talk is scheduled at exactly 60 minutes with no buffer, and the content is now planned for
+~62, so expect to use this list. In order: drop the third failure story; the `life_goals.md`
+aside; say the pieces slide (37) in one sentence over the ask-prompt slide (38); drop slides
+41–42 (*skills are not stickers* + the shape test — they survive in the pack); compress slide 25
+(docs are the agent's working memory) to one sentence; say slide 36 (*two weeks is a day*) as one
+sentence over slide 35 (trust / check). Never cut the grill demo, and never cut slide 39 (the
+willingness-to-learn lesson): it is the line people take home. Slide 30 (*think in sprints*) and
+slide 27 (*the job is the meeting*) can each be said over their neighbour in two sentences if the
+clock is really gone, but both land with the non-coders in the room, so cut them late. If the
+talk runs over, cut rung-4 time, never rung-0 time.
 
 ---
 
@@ -619,7 +731,7 @@ runs over, cut rung-4 time, never rung-0 time.
       install on a clean Mac and a clean Windows machine.
 - [ ] **Real prompts for Appendix B**: the ones there now are drafts in my voice; replace with
       2–3 verbatim from actual sessions.
-- [ ] **Trim the global CLAUDE.md** into the show-and-tell version for slide 20 (strip
+- [ ] **Trim the global CLAUDE.md** into the show-and-tell version for slide 22 (strip
       personal context; keep the communication rules + docs workflow).
 - [ ] **Build the takeaway pack** (§6).
 - [ ] **Helpers**: names confirmed, briefed.
@@ -701,12 +813,14 @@ I'll regret in three months, and anything touching auth, money, deletion or othe
 people's data. Findings only, most severe first. No praise.
 ```
 
-**5 · The doc pass**
+**5 · Persist the session (slide 31 — the one nobody types)**
 ```
-We just shipped this phase. Do the doc pass: promote what's durable into
-docs/reference, collapse the finished phase in the TODO doc to a few lines, and
-remove anything in the docs that describes code that no longer exists.
+Take everything we did and learned in this session and persist it in the docs, so
+a future session can pick it up cold.
 ```
+The long version, for the end of a real phase: *"Do the doc pass: promote what's durable into
+`docs/reference`, collapse the finished phase in the TODO doc to a few lines, and remove
+anything in the docs that describes code that no longer exists."*
 
 **6 · The handover**
 ```
@@ -720,6 +834,29 @@ few-word explainer the first time you mention it.
 Give me a guided tour of this repo: what it does, the five files I should read
 first and why, and how one request flows through it end to end. Don't narrate
 every file.
+```
+
+**8 · Going live (slide 38)**
+```
+I've built this locally and it works. I want it live on the internet with a real
+URL anyone can open. First, no changes: list the pieces I need (hosting, database,
+secrets, domain...), pick the simplest well-supported option for each and say why
+in one line, and tell me what it will cost. Then wait. When I say go: one step at
+a time, and after each step tell me how I can check it's live.
+```
+
+**9 · Explain a piece (slide 38)**
+```
+Explain what a <database / auth service / environment variable / DNS record> is
+and why my app needs one, as if I've never built software. One paragraph. Then the
+one decision I actually have to make, with your recommendation.
+```
+
+**10 · Fold an idea into the sprint (slide 30 — instead of opening a new tab)**
+```
+New idea, don't build it yet: <the idea, one or two sentences>. Work out where it
+belongs in docs/TODO/<plan>.md, fold it in, and tell me what it changes about the
+plan and what it conflicts with. If it doesn't belong in this sprint, say so.
 ```
 
 ## Appendix C — starter global `CLAUDE.md` for beginners (~25 lines)

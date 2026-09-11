@@ -5,27 +5,42 @@
 A **single talk**, and nothing else: *Build with Claude — AI Workshop #1*, Xander Steenbrugge at
 Wintercircus (Ghent). Talk 13:00–14:00, hands-on build session 14:00–16:00, beginner audience.
 
-Two files, one relationship:
+Two files, one relationship, plus one companion page:
 
-- **`build_with_claude_workshop.md` — the source of truth.** The full working context: the brief,
-  the core thread, per-beat talk notes, the **slide map (§4) that is the contract for the deck**,
-  the build-session ladder, takeaway pack, logistics, open decisions.
-- **`build_with_claude_workshop.html` — the stage deck.** The condensed performance of §4, and
-  also the website: on Vercel it is served at `/` by the rewrite in `vercel.json`. There is no
-  `index.html` — don't add one, it would shadow the rewrite.
+- **`build_with_claude_workshop.html` — the stage deck, and the source of truth for the talk
+  itself.** What is on each slide, in what order, in what words. Also the website: on Vercel it is
+  served at `/` by the rewrite in `vercel.json`. There is no `index.html` — don't add one, it would
+  shadow the rewrite.
+- **`build_with_claude_workshop.md` — the backstage doc. Secondary.** It holds what the deck
+  can't: the brief, the core thread, per-beat talk notes, the build-session facilitation detail
+  (blockers, fallbacks, the safety lines to say out loud), the takeaway pack manifest, logistics
+  (Claude access model, pre-work email, helpers, and the cut order for when the talk runs long),
+  open decisions, and the appendices — the `grilling` skill, the prompt library, the starter global
+  `CLAUDE.md`, `skills.md` — which are the only copy of the `workshop_pack/` material. Its §4 slide
+  map is now a record of how the deck was built, not a contract.
+- **`global_claude_md.html` — the public cut of Xander's real global `~/.claude/CLAUDE.md`**, a
+  scrollable page in the deck's theme, opened from the link on the first CLAUDE.md slide ("CLAUDE.md
+  contains the most valuable tokens of your life") and served at `/claude-md` by a `vercel.json`
+  rewrite. It is a hand-trimmed copy (about two thirds of the real file; the personal-goals include
+  is cut), not generated from it — when the real file changes materially, re-trim by hand. Same
+  no-dependency rules as the deck: fonts and logo are embedded data URIs.
 
-**Changes flow md → html.** If the two disagree about what a slide says, the md's §4 slide map wins
-and the deck is stale. Never edit the deck to say something §4 doesn't.
+**Changes flow html → md, on request only.** The deck is edited directly and slide changes do
+**not** need mirroring into the md — do a doc pass only when Xander explicitly asks for one. If the
+two disagree about what a slide says, **the deck wins and the md is stale**; never edit the deck to
+match §4. The md remains authoritative for everything that is not on a slide: logistics, the rung
+detail, the open decisions, the appendices.
 
-## The deck is deliberately one self-contained file
+## The deck is a static HTML file with curated illustrations
 
-No build step, no dependencies, no network calls, no external scripts. Both brand fonts
-(Futura Passata, Spline Sans) and both images are **base64 data URIs inside the HTML** — that's
-~414 KB of its 692 KB. It must keep working offline from a USB stick, because it does: the room's
-wifi is not a dependency of the talk.
+No build step, no dependencies, no external scripts or third-party requests. Both brand fonts
+(Futura Passata, Spline Sans) and the original imagery are base64 data URIs inside the HTML.
+Generated illustrations live in `assets/workshop/`, as requested for deletion-based curation.
+For offline use, copy that folder alongside the HTML; the room's wifi is not a dependency.
 
-So: never split assets into an `assets/` folder, never add a CDN link, a bundler, or a package
-manager. Edit the HTML in place.
+Keep the original embedded assets in place; don't add a CDN, bundler or package manager.
+See [workshop images](docs/reference/workshop-images.md) for selection filenames, fallbacks,
+the reusable visual style and exact generation prompts.
 
 **Deploying:** the folder *is* the site — no build step, no framework. `vercel.json` serves the deck
 at `/` and `.vercelignore` keeps the backstage files (the md, `CLAUDE.md`, `README.md`) out of the
@@ -33,12 +48,14 @@ deployment; they stay in git. Any push to `main` redeploys. On any other static 
 folder works by opening the deck's filename directly.
 
 Data embedded in the deck's `<script>`: `SHIP_ROWS`/`SHIP_MONTHS`/`SHIP_NAMES` drive the
-four-years-of-shipping chart on slide 4 (monthly totals exact, per-repo split rounded to ~1K lines);
-`TALK_BUDGET_S` is the 60-minute clock.
+four-years-of-shipping chart on slide 2 (monthly totals exact, per-repo split rounded to ~1K lines;
+the last bar, Sept 2026, is a partial month — re-pulled 10 Sept 2026 and labelled as such on the
+chart, so re-pulling it means updating `SHIP_ROWS`' last row, the legend's `TOTALS`, and the stats
+strip together); `TALK_BUDGET_S` is the 60-minute clock.
 
 Deck controls: arrows/clicker advance, **clicking does not** (copy slides, the notes panel and
-in-slide steps are clickable); `N` speaker notes, `T` elapsed clock; slides 27, 29 and 37 are
-click-to-copy. Slide 18 has five in-slide steps: elements with class `frag` (grouped by
+in-slide steps are clickable); `N` speaker notes, `T` elapsed clock; `.copy-slide` slides are
+click-to-copy. The progressive-disclosure slide has five in-slide steps: elements with class `frag` (grouped by
 `data-frag="n"`) reveal one step per arrow/tap before the deck moves on, and blocks with
 `data-peek` open an overlay showing what is inside them. Mobile (`max-width: 760px` or a coarse
 pointer): slides scroll vertically, tables become cards, swipe or the on-screen arrows advance.
