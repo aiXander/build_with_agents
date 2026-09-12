@@ -237,12 +237,11 @@ footer .meta { margin-top: 2em; font-size: var(--small); letter-spacing: 0.18em;
       <li><a href="#modal">Modal SDK</a></li>
       <li><a href="#fallow">Fallow, the truth layer</a></li>
       <li class="part"><span class="lbl">Docs as working memory</span><a href="#docs">Repo docs: the workflow</a></li>
-      <li><a href="#claude-md">The repo-root CLAUDE.md</a></li>
-      <li><a href="#when">When to update docs</a></li>
-      <li><a href="#sprint">Maintaining a sprint plan</a></li>
-      <li><a href="#scope">Scope discipline</a></li>
-      <li><a href="#closing">Closing out a finished plan</a></li>
-      <li><a href="#checklist">Before declaring a task done</a></li>
+      <li><a href="#rules">The rules</a></li>
+      <li><a href="#docpass">The doc pass</a></li>
+      <li class="part"><span class="lbl">The map read cold</span><a href="#claude-md">The project CLAUDE.md</a></li>
+      <li><a href="#shape">The shape it should have</a></li>
+      <li><a href="#agents">One file, every agent</a></li>
       <li class="part"><span class="lbl">Calibration</span><a href="#estimates">Time estimates</a></li>
     </ol>
   </aside>
@@ -256,7 +255,7 @@ footer .meta { margin-top: 2em; font-size: var(--small); letter-spacing: 0.18em;
         <span><i>Lives at</i><b>~/.claude/CLAUDE.md</b></span>
         <span><i>Loaded</i><b>always, before the first prompt</b></span>
         <span><i>Written</i><b>over ~6 months, one correction at a time</b></span>
-        <span><i>Cut for the room</i><b>a personal-goals file it also loads, and a few paragraphs trimmed for length</b></span>
+        <span><i>Cut for the room</i><b>a who-I-am file it also loads, and a few paragraphs trimmed for length</b></span>
       </div>
     </header>
 
@@ -267,13 +266,14 @@ footer .meta { margin-top: 2em; font-size: var(--small); letter-spacing: 0.18em;
       <ul>
         <li><b>Concise and clear over exhaustive.</b> I'm a technical dev, but I didn't watch what you did or solved: frame it cleanly with specific examples (a before/after, one representative snippet) rather than narrating everything. Keep the summary self-contained; don't make me open other files to understand it.</li>
         <li><b>No unnecessary verbosity, but also no hyper-dense prose</b> I have to read twice. Plain sentences, jargon only where it's the precise term.</li>
-        <li><b>Never use a bare pointer or ID as if I remember what it means.</b> Task numbers, phase numbers, ticket codes, doc anchors (<code>3.2</code>, <code>C13</code>, <code>Thread-C</code>, file/section refs) live in <em>your</em> context, not mine. <b>The <code>docs/</code> plan files are written for <em>you</em>, the agent; I almost never open them.</b> The only thing I read is what you produce in the session. So whenever you reference something from a doc, restate it inline in a sentence: what it is, what the problem is, what the doc proposed. Keep the pointer, just never naked:
+        <li><b>Never use a bare pointer or ID as if I remember what it means.</b> Task numbers, phase numbers, sprint IDs, ticket codes, doc anchors (<code>3.2</code>, <code>C13</code>, <code>Thread-C</code>, <code>P2</code>, file/section refs) live in <em>your</em> context, not mine: I didn't read the plan doc you're working from. <b>The <code>docs/</code> markdown and plan files are written for <em>you</em>, the agent; I almost never open them.</b> The only thing I read is what you produce in the session. So whenever you reference something from a doc (a problem, a proposed solution, a decision, an open question), restate it inline in a sentence or two: what it is, what the problem is, what the doc proposed. Every pointer gets a few-word explainer attached the first time it appears, so I can hook meaning onto it. Keep the pointer, just never naked:
           <div class="pair">
             <div class="ex no"><span class="tag">Bare pointer</span>"Pull task 3.2 forward &mdash; it needs no prod rows. The engine-envelope design (C13) &hellip;"</div>
             <div class="ex yes"><span class="tag">Pointer with a hook</span>"Pull <b>task 3.2 (backfill the embeddings index)</b> forward &mdash; it needs no prod rows. The engine-envelope design &mdash; <b>C13, which atom envelope feeds the shareable bio</b> &mdash; &hellip;"</div>
           </div>
         </li>
-        <li><b>Use rich visual markdown</b> (headers, tables, bold, code blocks) to make summaries scannable and fast to absorb.</li>
+        <li><b>Use rich visual markdown</b> (headers, tables, bold, code blocks, colour where supported) to make summaries scannable and fast to absorb.</li>
+        <li><b>For very long, complicated sprint handovers only:</b> you may occasionally generate an <code>.html</code> file with a rich visual layout (diagrams, styled sections) instead of a markdown wall. Use sparingly &mdash; a normal sprint summary stays in chat. <span class="cut" style="margin:0.4em 0 0">The page you're reading came out of that rule</span></li>
       </ul>
 
       <h2 id="machine">My machine</h2>
@@ -295,84 +295,86 @@ footer .meta { margin-top: 2em; font-size: var(--small); letter-spacing: 0.18em;
       </ul>
 
       <h2 id="fallow">Fallow, the truth layer for TS/JS</h2>
-      <p><code>fallow</code> is installed globally: a deterministic, graph-based static analyzer that finds dead code, duplication, complexity hotspots and architecture drift across the whole module graph. Use it as the truth layer to verify AI-generated changes.</p>
-<pre><code><span class="k">fallow audit</span>                    <span class="c"># before every commit in a TS/JS repo: pass / warn / fail</span>
-<span class="k">fallow dupes</span> --mode semantic    <span class="c"># when suspecting duplicated logic; semantic catches renames</span></code></pre>
+      <p><code>fallow</code> is installed globally: a deterministic, graph-based static analyzer that finds dead code, duplication, complexity hotspots and architecture drift across the whole module graph. Use it as the truth layer to verify AI-generated changes; on big trees, scope the broad pass with <code>--changed-since &lt;base&gt;</code>.</p>
+<pre><code><span class="k">fallow audit</span>                  <span class="c"># default gate before a commit, on changed files</span>
+<span class="k">fallow --format json</span>          <span class="c"># the broader pass after a long implementation task</span>
+<span class="k">fallow dupes</span> --mode semantic  <span class="c"># suspected duplication; semantic catches renames</span></code></pre>
 
       <h2 id="docs">Repo markdown docs: the <code>docs/</code> workflow</h2>
-      <p>Most of my repos have a <code>docs/</code> folder full of markdown files that I treat as <b>living working memory</b> for coding agents. Three subfolders:</p>
+      <p>Most of my repos have a <code>docs/</code> folder full of markdown files that I treat as <b>living working memory</b> for coding agents. It is the primary briefing material I point agents at, so <b>keeping it current is every agent's job, in the same session, not a follow-up</b>: stale docs mislead the next agent worse than no docs. Three subfolders:</p>
       <table class="tab">
         <thead><tr><th>Folder</th><th>What lives there</th><th>Lifecycle</th></tr></thead>
         <tbody>
-          <tr><td>docs/TODO/</td><td data-h="What lives there">Implementation plans, future features, the roadmap. Short-lived, churns fast.</td><td data-h="Lifecycle">Where new features <i>start their life</i>.</td></tr>
-          <tr><td>docs/reference/</td><td data-h="What lives there">How things actually work right now, and why. Always up to date with what exists.</td><td data-h="Lifecycle">Where features <i>end up</i> once built.</td></tr>
-          <tr><td>docs/finished/</td><td data-h="What lives there">Deprecated docs, retired plans.</td><td data-h="Lifecycle"><i>Write-only</i> from your perspective: move files in, never read from.</td></tr>
+          <tr><td>docs/TODO/</td><td data-h="What lives there">Implementation plans, upcoming features, the roadmap. Churns fast.</td><td data-h="Lifecycle">Where work <i>starts</i>.</td></tr>
+          <tr><td>docs/reference/</td><td data-h="What lives there">How the codebase works right now, and why. Always true of what exists.</td><td data-h="Lifecycle">Where shipped work <i>ends up</i>.</td></tr>
+          <tr><td>docs/finished/</td><td data-h="What lives there">Retired plans.</td><td data-h="Lifecycle"><i>Write-only:</i> move files in, never read from.</td></tr>
         </tbody>
       </table>
-      <p>A reference doc is <b>a map, not a mirror</b>: it exists so an agent knows <em>which files to read and why</em>. Where the relevant code lives, what role each file plays in the bigger picture, and the reasoning behind past design decisions so mistakes aren't repeated. It briefs the read; it doesn't replace it. Its job is to get an agent oriented <em>fast</em>, in far fewer tokens than reading the code cold, so a clean restatement of how a subsystem fits together earns its place even if it could in theory be derived from the code. What doesn't earn its place: line-by-line narration, function-signature listings, and mirrors of code that will drift the moment the code changes. Always add what the code can't tell you: why it's shaped this way, what was tried and rejected, which invariants are load-bearing, where the traps are.</p>
+      <p>Wanting to read something out of <code>docs/finished/</code> means its durable knowledge is missing from <code>docs/reference/</code>. Fix that instead. Create a missing subfolder on first write; don't scaffold empty structure.</p>
+      <p>A reference doc is <b>a map, not a mirror</b>: it tells an agent <em>which files to read and why</em>. Where the code lives, what role each file plays, the reasoning behind past decisions, what was tried and rejected, which invariants are load-bearing, where the traps are. It briefs the read in far fewer tokens than reading cold, so a clean restatement of how a subsystem fits together earns its place even if it could in theory be derived from the code. What doesn't earn its place: line-by-line narration, function-signature listings, and mirrors of code that drift the moment the code changes.</p>
       <div class="rule">The test for a section: <em>does this help an agent decide what to read and how to change it faster than the code itself would?</em> If yes, keep it.</div>
-      <p><b>Reference docs follow code, never lead it.</b> Don't pre-write <code>docs/reference/&lt;feature&gt;.md</code> for something that doesn't exist yet; that's what <code>docs/TODO/</code> is for. The moment a reference doc starts describing aspirational behaviour, it becomes a lie the next agent will believe.</p>
-      <p><b>Lifecycle:</b> new work appears in <code>docs/TODO/</code> first. As it ships, the durable bits migrate into <code>docs/reference/</code>. Once a plan is fully drained, the husk moves to <code>docs/finished/</code>. The job of every doc-update pass is to keep the overlap between them small and directional: TODO shrinks, reference grows.</p>
-      <p>These docs are the primary briefing material I point agents at. <b>Keeping them up to date is every single agent's job, not a separate task:</b> whenever you notice a doc is out of date versus the code, you fix that doc in the same session. Don't leave it for the next agent. Stale docs are worse than no docs, because they mislead the next agent.</p>
 
-      <h2 id="claude-md">The repo-root <code>CLAUDE.md</code>: what it is and how to maintain it</h2>
-      <p><b>What it is:</b> the map an agent reads cold at first contact. The mission, conventions, commands, repo layout, the load-bearing cross-cutting rules and gotchas needed <em>every</em> time, and a <b>pointer map</b> into <code>docs/reference/</code>. The reference docs are per-feature deep context, loaded <em>when relevant</em>. They point at each other, never duplicate each other.</p>
-      <p><b>What it is not:</b> an encyclopedia, a changelog, a sprint log, or an incident archive. Per-feature depth belongs in a reference doc; in-flight plans belong in <code>docs/TODO/</code>; history belongs in git.</p>
-      <h4>Two hard rules govern what it links to</h4>
+      <h3 id="rules">The rules</h3>
       <ul>
-        <li><b>Every reference doc gets a pointer.</b></li>
-        <li><b>Do not list <code>docs/TODO/</code> sprint docs in it.</b> I always point an agent at a specific sprint doc by hand when I start a session, so a single stable pointer to the folder itself is fine.</li>
-      </ul>
-      <h4>When to update it</h4>
-      <p>After changes that shift the map: a route, top-level package, deploy surface, or reference doc added or removed.</p>
-      <div class="rule">The bar for every sentence: <em>would a future agent landing cold be misled without it?</em> If no, it doesn't belong there.</div>
-      <h4>Rules that keep it from bloating</h4>
-      <ul>
-        <li>New feature &rarr; reference doc + <b>one</b> pointer line, never a new prose section. More than ~3 sentences about one subsystem = a reference doc in the wrong file.</li>
-        <li>No status markers or datelines as content ("FIXED 2026-&hellip;", "Phase X COMPLETE"). Describe the steady state.</li>
-        <li>Only cross-cutting gotchas (likely to bite in <em>most</em> sessions) belong here. When adding, also subtract.</li>
-        <li>Size budget <b>~5,000 words</b>. Over budget &rarr; move detail into <code>docs/reference/</code>, don't grow the file.</li>
+        <li><b>Reference follows code, never leads it.</b> Never pre-write a reference doc for something unbuilt; that's a TODO plan. When code and a doc disagree, the doc is stale: update the doc, never "fix" working code to match it, unless I explicitly framed the doc as a spec.</li>
+        <li><b>Information flows TODO &rarr; reference &rarr; finished, never back.</b> TODO and reference overlap while work is in flight; each doc pass keeps that overlap small and directional. TODO shrinks, reference grows.</li>
+        <li><b>One file = one scope.</b> No fact restated across files, no god-files. A TODO plan links to the reference doc for another subsystem's current state rather than describing it. When two docs overlap: pick the canonical home, leave a one-line pointer in the other, delete the duplicate prose. Cross-link with relative paths; nothing may link into <code>docs/finished/</code>.</li>
+        <li><b>Drift is a shared burden.</b> If your task crosses a doc that is <em>materially misleading</em>, fix it with a short corrective edit, without letting cleanup eclipse the task. Same for a reference doc you're already editing that narrates code line by line: prune it to map + rationale in the same pass.</li>
       </ul>
 
-      <h2 id="when">When to update docs</h2>
-      <p>Do a doc pass at the end of an implementation phase (shipped feature, refactor, public-API change, dependency change, architectural decision) <b>before declaring the task done</b>. It's part of the task, not a follow-up. Trivial fixes skip it. Two standing rules:</p>
-      <ul>
-        <li><b>Drift is a shared burden:</b> if your task crosses paths with a doc that's <em>materially misleading</em>, fix it with a short corrective edit. Don't let cleanup eclipse the actual task.</li>
-        <li><b>Code is the source of truth:</b> when code and a doc disagree, the doc is stale. Update the doc, never "fix" working code to match it (unless I explicitly framed the doc as a spec).</li>
-      </ul>
-
-      <h2 id="sprint">Maintaining a sprint plan as work progresses</h2>
-      <p>A plan doc briefs the <b>next</b> agent; it is not a historical log. Completed phases must be actively drained, not just checked off. Mandatory condensation pass when you finish a phase:</p>
+      <h2 id="docpass">The doc pass at the end of a phase</h2>
+      <p>Do it <b>before declaring the task done</b> &mdash; shipped feature, refactor, public-API change, dependency change, architectural decision. Typos and one-liners skip it.</p>
       <ol>
-        <li>Promote durable detail into <code>docs/reference/</code>. Information flows <b>TODO &rarr; reference</b>, never back.</li>
-        <li>Collapse each completed phase to a few lines: what shipped, key names and locations, decisions that constrain remaining work, plus a <em>Done, see reference/&lt;feature&gt;.md</em> pointer.</li>
-        <li>Delete scaffolding: code snippets, rejected options, debug notes, fully-checked checklists.</li>
-        <li>Keep still-open sections (next steps, open questions, known issues) verbatim and clearly marked.</li>
+        <li><b>Promote</b> the durable detail of what you shipped into <code>docs/reference/</code> (create the doc if needed) and give it a pointer in the repo's <code>CLAUDE.md</code>.</li>
+        <li><b>Drain the plan you worked from.</b> Collapse each finished phase to a few lines: what shipped, key names and locations, decisions that constrain the remaining work, ending in <em>Done &mdash; see reference/&lt;feature&gt;.md</em>. Delete the scaffolding: code snippets, rejected options, debug notes, fully-checked checklists. Keep open sections (next steps, open questions, known issues) verbatim and clearly marked.</li>
+        <li><b>If the plan is fully drained, close it.</b> Re-home leftover TODOs into other open plans that fit their scope, move the husk to <code>docs/finished/</code> (move, never delete, unless I said so for that file), fix any link that now dangles.</li>
       </ol>
-      <div class="rule">Test for a well-drained doc: open work reachable in the first screenful, and the shipped-work section <em>shorter</em> than the remaining-work section.</div>
-
-      <h2 id="scope">Scope discipline across files</h2>
-      <p>One file = one pure scope. No fact restated across files, no catch-all god-files. When two docs overlap: pick the canonical home, leave a one-line pointer in the other, delete the duplicate prose. Cross-link liberally with relative paths.</p>
-
-      <h2 id="closing">Closing out a finished plan</h2>
-      <ol>
-        <li>Promote durable knowledge into <code>docs/reference/</code> (create the doc if needed).</li>
-        <li>Re-home leftover TODOs into other open plans that fit their scope.</li>
-        <li>Move the husk to <code>docs/finished/</code>. Move, never delete, unless I explicitly said so for that file.</li>
-        <li>Fix dangling links: none may point into <code>docs/finished/</code>.</li>
-      </ol>
-
-      <h2 id="checklist">Before declaring a coding task done</h2>
+      <div class="rule">Test for a well-drained plan: its open work is in the <em>first screenful</em>, and its shipped section is <em>shorter</em> than its remaining section.</div>
       <ul class="check">
-        <li>Docs invalidated by this change updated; if working off a TODO plan, condensation pass run (TODO shrinks, reference grows).</li>
+        <li>Docs invalidated by this change updated; the plan I worked from drained.</li>
         <li>Every reference doc has a pointer in <code>CLAUDE.md</code>; no TODO sprint docs enumerated there.</li>
         <li>Finished plans: TODOs re-homed, husk moved to <code>docs/finished/</code>, no dangling links.</li>
       </ul>
 
+      <h2 id="claude-md">The project <code>CLAUDE.md</code></h2>
+      <p><b>What it is:</b> the map an agent reads cold at first contact &mdash; and a <b>router</b>, not an encyclopedia. It carries what <em>every</em> session in that repo needs, and points at everything else. <code>docs/reference/</code> is per-feature depth loaded when relevant; the two point at each other and never duplicate each other.</p>
+      <p><b>What it is not:</b> a changelog, a sprint log or an incident archive. Per-feature depth goes to <code>docs/reference/&lt;feature&gt;.md</code>; in-flight plans to <code>docs/TODO/</code> (one stable pointer to the folder, <b>never an enumeration of sprint docs</b> &mdash; I hand an agent its sprint doc myself); history to git.</p>
+
+      <h3 id="shape">The shape it should have</h3>
+      <p>Roughly this order. A file that has these sections and nothing else is done.</p>
+      <table class="tab">
+        <thead><tr><th>Section</th><th>What it carries</th></tr></thead>
+        <tbody>
+          <tr><td>1. Mission</td><td data-h="What it carries">What the project is for, in a paragraph, plus what's live or deployed if anything is.</td></tr>
+          <tr><td>2. Blast radius</td><td data-h="What it carries">If the repo touches anything live (prod DB, deploys, paid APIs, other people's data): what's dangerous, what needs my go-ahead per action, and &mdash; just as important &mdash; <b>what is free to run without asking</b> (local tests, linters, read-only queries, dry runs). Strong "ask first" language without the permission half makes a careful model stop where I'd want it to continue.</td></tr>
+          <tr><td>3. Doc map</td><td data-h="What it carries">One row per <code>docs/reference/</code> doc: the file, and <em>when to open it</em> in one clause ("touching X", "when Y misbehaves"). Contextual pointers, never "read A, B and C before every edit".</td></tr>
+          <tr><td>4. Debug priors</td><td data-h="What it carries">The two or three standing "if it looks like X, suspect Y first" that recur in this repo.</td></tr>
+          <tr><td>5. Repo layout</td><td data-h="What it carries">Top-level packages, one line each on their role and the trap in each, if any.</td></tr>
+          <tr><td>6. Load-bearing rules</td><td data-h="What it carries">Numbered. Each one a rule an agent would otherwise break, with a reason or pointer attached.</td></tr>
+          <tr><td>7. Definition of done</td><td data-h="What it carries">The checkable conditions a task must meet before it's reported complete: tests green, doc pass done, security pass done, shipping steps named and left un-run. <b>Models hand back early when done isn't defined.</b></td></tr>
+          <tr><td>8. Invariants</td><td data-h="What it carries">The few cross-cutting facts that bite in <em>most</em> sessions. More than ~3 sentences about one subsystem = a reference doc in the wrong file.</td></tr>
+          <tr><td>9. Commands</td><td data-h="What it carries">The families to know cold, plus what the tooling doesn't confess. <code>--help</code> output and config files are the source of truth; don't cache them.</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><b>Cut what a capable model does unprompted</b> ("run the tests", "read the code first", "be careful").</li>
+        <li>No status markers or datelines as content ("FIXED 2026-&hellip;", "Phase X COMPLETE"). Describe the steady state; a date only when it disambiguates.</li>
+        <li>Size budget <b>~5,000 words</b> (<code>wc -w</code>, unless the repo pins another). Over budget &rarr; move detail behind a pointer, don't grow the file.</li>
+        <li><b>Push every repo toward this shape, continuously.</b> Whenever you work in a repo whose <code>CLAUDE.md</code> deviates &mdash; subsystem depth inlined, doc pointers phrased as "read first", no permission half, no definition of done, over budget &mdash; bring it closer in the same session's doc pass. Keep it proportionate: a one-line fix earns no rework. If the file is far off, say so and offer the full pass as its own task.</li>
+        <li>Update it whenever the map shifts: a route, port or adapter, top-level package, deploy surface or reference doc added or removed.</li>
+      </ul>
+      <div class="rule">The bar for every sentence: <em>would a future agent landing cold be misled without it?</em> If no, it doesn't belong there.</div>
+
+      <h3 id="agents">One instruction file, every agent</h3>
+      <p>Codex reads <code>AGENTS.md</code>; Claude reads <code>CLAUDE.md</code>. <b><code>CLAUDE.md</code> is the source, and <code>AGENTS.md</code> is always a symlink to it</b> &mdash; in the repo root, and in every subfolder that has its own <code>CLAUDE.md</code>. When you create a <code>CLAUDE.md</code>, or find one without the link, add the link in the same pass. Never overwrite a real <code>AGENTS.md</code> that says something different: flag it instead.</p>
+<pre><code><span class="k">ln -s CLAUDE.md AGENTS.md</span>                     <span class="c"># per repo, and per subfolder</span>
+<span class="k">ln -s ~/.claude/CLAUDE.md ~/.codex/AGENTS.md</span>  <span class="c"># globally, for Codex too</span></code></pre>
+      <p>Anything in here that relies on a Claude-only mechanism (an <code>@</code>-include, say) must also spell out what a non-Claude agent should do instead.</p>
+
       <h2 id="estimates">Time estimates for dev work</h2>
       <p>Modern AI-assisted dev: fast-path tasks (codegen from specs, refactoring, boilerplate) are ~10&times; faster; normal-path tasks (architecture, debugging, iterative human-in-the-loop feedback) are ~2&times; faster. Weight estimates toward normal-path rather than a blanket speedup.</p>
 
-      <span class="cut">Cut for the room: a personal-goals file this one also loads, so every task nests under what I'm actually trying to do this year</span>
+      <span class="cut">Cut for the room: a who-I-am-and-what-I'm-building file this one also loads, so every task nests under what I'm actually trying to do this year</span>
 
     </article>
 
